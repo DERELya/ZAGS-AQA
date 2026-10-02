@@ -1,38 +1,31 @@
 package pages;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+public class CitizenPage extends  BasePage {
 
-public class CitizenPage {
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
-    @FindBy(xpath = "//label[text()=\"Фамилия\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-7")
     private WebElement lastNameInput;
 
-    @FindBy(xpath = "//label[text()=\"Имя\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-8")
     private WebElement nameLabel;
 
-    @FindBy(xpath = "//label[text()=\"Отчество\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-9")
     private WebElement middlenameLabel;
 
-    @FindBy(xpath = "//label[text()=\"Дата рождения\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-10")
     private WebElement dateOfBirthLabel;
 
-    @FindBy(xpath = "//label[text()=\"Номер паспорта\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-11")
     private WebElement passportLabel;
 
-    @FindBy(xpath = "//label[text()=\"Пол\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-12")
     private WebElement genderLabel;
 
-    @FindBy(xpath = "//label[text()=\"Адрес прописки\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-13")
     private WebElement addressLabel;
 
     @FindBy(xpath = "//button[text()=\"Далее\"]")
@@ -44,16 +37,7 @@ public class CitizenPage {
 
 
     public CitizenPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-    }
-
-    private void clearAndSendKeys(WebElement element, String value) {
-        wait.until(ExpectedConditions.visibilityOf(element));
-        element.sendKeys(Keys.CONTROL + "a");
-        element.sendKeys(Keys.BACK_SPACE);
-        element.sendKeys(value);
+       super(driver);
     }
 
     public CitizenPage fillLastName(String lastName) {

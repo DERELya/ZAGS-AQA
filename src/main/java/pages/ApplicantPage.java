@@ -1,36 +1,29 @@
 package pages;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 
-public class ApplicantPage {
+public class ApplicantPage extends  BasePage {
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
-    @FindBy(xpath = "//label[text()=\"Фамилия\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-1")
     private WebElement lastNameInput;
 
-    @FindBy(xpath = "//label[text()=\"Имя\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-2")
     private WebElement nameInput;
 
-    @FindBy(xpath = "//label[text()=\"Отчество\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-3")
     private WebElement middleNameInput;
 
-    @FindBy(xpath = "//label[text()=\"Телефон\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-4")
     private WebElement phoneNumberInput;
 
-    @FindBy(xpath = "//label[text()=\"Номер паспорта\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-5")
     private WebElement passportInput;
 
-    @FindBy(xpath = "//label[text()=\"Адрес прописки\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-6")
     private WebElement addressInput;
 
     @FindBy(xpath = "//button[text()=\"Далее\"]")
@@ -41,17 +34,9 @@ public class ApplicantPage {
 
 
     public ApplicantPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        super(driver);
     }
 
-    private void clearAndSendKeys(WebElement element, String value) {
-        wait.until(ExpectedConditions.visibilityOf(element));
-        element.sendKeys(Keys.CONTROL + "a");
-        element.sendKeys(Keys.BACK_SPACE);
-        element.sendKeys(value);
-    }
 
     public ApplicantPage fillLastName(String lastName) {
         clearAndSendKeys(lastNameInput, lastName);

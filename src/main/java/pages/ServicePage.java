@@ -10,29 +10,27 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class ServicePage {
-    private final WebDriver driver;
-    private final WebDriverWait wait;
+public class ServicePage extends BasePage {
 
-    @FindBy(xpath = "//label[text()=\"Дата регистрации\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-14")
     private WebElement dateOfRegistrationInput;
 
-    @FindBy(xpath = "//label[text()=\"Новая фамилия\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-15")
     private WebElement newLastNameInput;
 
-    @FindBy(xpath = "//label[text()=\"Фамилия супруга/и\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-16")
     private WebElement lastNameSpouseInput;
 
-    @FindBy(xpath = "//label[text()=\"Имя супруга/и\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-17")
     private WebElement nameSpouseInput;
 
-    @FindBy(xpath = "//label[text()=\"Отчество супруга/и\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-18")
     private WebElement middleNameSpouseInput;
 
-    @FindBy(xpath = "//label[text()=\"Дата рождения супруга/и\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-19")
     private WebElement dateOfBirthSpouseInput;
 
-    @FindBy(xpath = "//label[text()=\"Номер паспорта супруга/и\"]/parent::div/following-sibling::input")
+    @FindBy(css = "#TextInputField-20")
     private WebElement passportSpouseInput;
 
     @FindBy(xpath = "//button[text()=\"Завершить\"]")
@@ -43,17 +41,9 @@ public class ServicePage {
     private WebElement closeButton;
 
     public ServicePage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        super(driver);
     }
 
-    private void clearAndSendKeys(WebElement element, String value) {
-        wait.until(ExpectedConditions.visibilityOf(element));
-        element.sendKeys(Keys.CONTROL + "a");
-        element.sendKeys(Keys.BACK_SPACE);
-        element.sendKeys(value);
-    }
 
     public ServicePage fillDateOfRegistration(String dateOfRegistration) {
        clearAndSendKeys(dateOfRegistrationInput, dateOfRegistration);
