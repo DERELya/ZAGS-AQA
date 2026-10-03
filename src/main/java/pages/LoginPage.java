@@ -1,6 +1,5 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,15 +13,7 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//button[text()=\"Войти как пользователь\"]")
     private WebElement buttonUser;
 
-    @FindBy(xpath = "//button[text()=\"Войти как администратор\"]")
-    private WebElement buttonAdmin;
-
-    @FindBy(xpath = "//button[text()=\"Заказать справку\"]")
-    private WebElement buttonApplication;
-
-
-    public LoginPage clickButtonUser() {
+    public void clickButtonUser() {
         wait.until(ExpectedConditions.elementToBeClickable(buttonUser)).click();
-        return this;
     }
 }

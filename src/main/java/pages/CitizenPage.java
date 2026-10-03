@@ -7,34 +7,29 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class CitizenPage extends  BasePage {
 
-    @FindBy(css = "#TextInputField-7")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Фамилия\"]/@for]")
     private WebElement lastNameInput;
 
-    @FindBy(css = "#TextInputField-8")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Имя\"]/@for]")
     private WebElement nameLabel;
 
-    @FindBy(css = "#TextInputField-9")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Отчество\"]/@for]")
     private WebElement middlenameLabel;
 
-    @FindBy(css = "#TextInputField-10")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Дата рождения\"]/@for]")
     private WebElement dateOfBirthLabel;
 
-    @FindBy(css = "#TextInputField-11")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Номер паспорта\"]/@for]")
     private WebElement passportLabel;
 
-    @FindBy(css = "#TextInputField-12")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Пол\"]/@for]")
     private WebElement genderLabel;
 
-    @FindBy(css = "#TextInputField-13")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Адрес прописки\"]/@for]")
     private WebElement addressLabel;
 
     @FindBy(xpath = "//button[text()=\"Далее\"]")
     private WebElement nextButton;
-    @FindBy(xpath = "//button[text()=\"Назад\"]")
-    private WebElement backButton;
-    @FindBy(xpath = "//button[text()=\"Закрыть\"]")
-    private WebElement closeButton;
-
 
     public CitizenPage(WebDriver driver) {
        super(driver);
@@ -75,28 +70,7 @@ public class CitizenPage extends  BasePage {
         return this;
     }
 
-    public CitizenPage fillAllTest(){
-        return fillLastName("Сергеев").
-        fillName("Олег").
-        fillMiddlename("Викторович").
-        fillDateOfBirth("12.09.2005").
-        fillPassport("12345123").
-        fillGender("Муж").
-        fillAddress("г.Брест, ул.Московская 320");
-    }
-
-    public ServicePage clickNextButton() {
+    public void clickNextButton() {
         wait.until(ExpectedConditions.elementToBeClickable(nextButton)).click();
-        return new ServicePage(driver);
     }
-
-    public void clickBackButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(backButton)).click();
-    }
-
-    public void clickCloseButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(closeButton)).click();
-    }
-
-
 }

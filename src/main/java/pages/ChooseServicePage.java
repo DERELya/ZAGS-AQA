@@ -14,8 +14,7 @@ public class ChooseServicePage extends BasePage {
     @FindBy(xpath = "//button[text()=\"Регистрация брака\"]")
     private WebElement buttonWedding;
 
-    public ChooseServicePage clickButtonWedding() {
+    public void clickButtonWedding() {
         wait.until(ExpectedConditions.elementToBeClickable(buttonWedding)).click();
-        return this;
     }
 }

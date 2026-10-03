@@ -8,22 +8,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class ApplicantPage extends  BasePage {
 
-    @FindBy(css = "#TextInputField-1")
+    @FindBy(xpath="//input[contains(@placeholder, \"фамилию\")]")
     private WebElement lastNameInput;
 
-    @FindBy(css = "#TextInputField-2")
+    @FindBy(xpath="//input[contains(@placeholder, \"имя\")]")
     private WebElement nameInput;
 
-    @FindBy(css = "#TextInputField-3")
+    @FindBy(xpath="//input[contains(@placeholder, \"отчество\")]")
     private WebElement middleNameInput;
 
-    @FindBy(css = "#TextInputField-4")
+    @FindBy(xpath="//input[contains(@placeholder, \"телефона\")]")
     private WebElement phoneNumberInput;
 
-    @FindBy(css = "#TextInputField-5")
+    @FindBy(xpath="//input[contains(@placeholder, \"паспорта\")]")
     private WebElement passportInput;
 
-    @FindBy(css = "#TextInputField-6")
+    @FindBy(xpath="//input[contains(@placeholder, \"прописки\")]")
     private WebElement addressInput;
 
     @FindBy(xpath = "//button[text()=\"Далее\"]")
@@ -66,15 +66,6 @@ public class ApplicantPage extends  BasePage {
    public ApplicantPage fillAddress(String address) {
         clearAndSendKeys(addressInput, address);
         return this;
-   }
-
-   public ApplicantPage fillAllTest(){
-        return fillLastName("Сергеев").
-        fillName("Олег").
-        fillMiddlename("Викторович").
-        fillPhone("+375672911256").
-        fillPassport("12345123").
-        fillAddress("г.Брест, ул.Московская 320");
    }
    public void clickNextButton() {
        wait.until(ExpectedConditions.elementToBeClickable(nextButton)).click();

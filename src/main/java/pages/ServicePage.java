@@ -1,36 +1,32 @@
 package pages;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 
 public class ServicePage extends BasePage {
 
-    @FindBy(css = "#TextInputField-14")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Дата регистрации\"]/@for]")
     private WebElement dateOfRegistrationInput;
 
-    @FindBy(css = "#TextInputField-15")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Новая фамилия\"]/@for]")
     private WebElement newLastNameInput;
 
-    @FindBy(css = "#TextInputField-16")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Фамилия супруга/и\"]/@for]")
     private WebElement lastNameSpouseInput;
 
-    @FindBy(css = "#TextInputField-17")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Имя супруга/и\"]/@for]")
     private WebElement nameSpouseInput;
 
-    @FindBy(css = "#TextInputField-18")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Отчество супруга/и\"]/@for]")
     private WebElement middleNameSpouseInput;
 
-    @FindBy(css = "#TextInputField-19")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Дата рождения супруга/и\"]/@for]")
     private WebElement dateOfBirthSpouseInput;
 
-    @FindBy(css = "#TextInputField-20")
+    @FindBy(xpath = "//input[@id=//label[text()=\"Номер паспорта супруга/и\"]/@for]")
     private WebElement passportSpouseInput;
 
     @FindBy(xpath = "//button[text()=\"Завершить\"]")
@@ -80,23 +76,12 @@ public class ServicePage extends BasePage {
        return this;
     }
 
-    public ServicePage fillAllTest(){
-        return fillDateOfRegistration("26.09.2026")
-                .fillNewLastName("Петрова")
-                .fillLastNameSpouse("Сергеев")
-                .fillNameSpouse("Олег")
-                .fillMiddleNameSpouse("Викторович")
-                .fillDateOfBirthSpouse("12.06.2000")
-                .fillPassportSpouse("12784352617");
-    }
-
     public void clickCompleteButton() {
         wait.until(ExpectedConditions.elementToBeClickable(completeButton)).click();
     }
 
-    public CitizenPage clickBackButton() {
+    public void clickBackButton() {
         wait.until(ExpectedConditions.elementToBeClickable(backButton)).click();
-        return new CitizenPage(driver);
     }
 
     public void clickCloseButton() {
