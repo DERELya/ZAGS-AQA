@@ -1,19 +1,25 @@
 package pages;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.user.ApplicantPage;
 
 public class LoginPage extends BasePage {
-        public LoginPage(WebDriver driver) {
-            super(driver);
+        public LoginPage() {
+            super();
         }
 
     @FindBy(xpath = "//button[text()=\"Войти как пользователь\"]")
     private WebElement buttonUser;
 
-    public void clickButtonUser() {
-        wait.until(ExpectedConditions.elementToBeClickable(buttonUser)).click();
+    @FindBy(xpath = "//button[text()=\"Войти как администратор\"]")
+    private WebElement buttonAdmin;
+
+    public ApplicantPage clickButtonUser() {
+       click(buttonUser);
+       return new ApplicantPage();
+    }
+    public void clickButtonAdmin() {
+        click(buttonAdmin);
     }
 }

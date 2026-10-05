@@ -1,12 +1,12 @@
-package pages;
+package pages.user;
 
-import org.openqa.selenium.WebDriver;
+import model.WeddingData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.BasePage;
 
 
-public class ServicePage extends BasePage {
+public class ServiceWeddingPage extends BasePage {
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Дата регистрации\"]/@for]")
     private WebElement dateOfRegistrationInput;
@@ -36,55 +36,66 @@ public class ServicePage extends BasePage {
     @FindBy(xpath = "//button[text()=\"Закрыть\"]")
     private WebElement closeButton;
 
-    public ServicePage(WebDriver driver) {
-        super(driver);
+    public ServiceWeddingPage() {
+        super();
     }
 
 
-    public ServicePage fillDateOfRegistration(String dateOfRegistration) {
+    public ServiceWeddingPage fillForm(WeddingData weddingData) {
+        clearAndSendKeys(dateOfRegistrationInput, weddingData.dateOfRegistration());
+        clearAndSendKeys(newLastNameInput, weddingData.newLastName());
+        clearAndSendKeys(lastNameSpouseInput, weddingData.lastNameSpouse());
+        clearAndSendKeys(nameSpouseInput, weddingData.nameSpouse());
+        clearAndSendKeys(middleNameSpouseInput, weddingData.middleNameSpouse());
+        clearAndSendKeys(dateOfBirthSpouseInput, weddingData.dateOfBirthSpouse());
+        clearAndSendKeys(passportSpouseInput, weddingData.passportSpouse());
+        return this;
+    }
+
+    public ServiceWeddingPage fillDateOfRegistration(String dateOfRegistration) {
        clearAndSendKeys(dateOfRegistrationInput, dateOfRegistration);
        return this;
     }
 
-    public ServicePage fillNewLastName(String newLastName) {
+    public ServiceWeddingPage fillNewLastName(String newLastName) {
         clearAndSendKeys(newLastNameInput, newLastName);
         return this;
     }
 
-    public ServicePage fillLastNameSpouse(String lastNameSpouse) {
+    public ServiceWeddingPage fillLastNameSpouse(String lastNameSpouse) {
         clearAndSendKeys(lastNameSpouseInput, lastNameSpouse);
         return this;
     }
 
-    public ServicePage fillNameSpouse(String nameSpouse) {
+    public ServiceWeddingPage fillNameSpouse(String nameSpouse) {
         clearAndSendKeys(nameSpouseInput, nameSpouse);
         return this;
     }
 
-    public ServicePage fillMiddleNameSpouse(String middleNameSpouse) {
+    public ServiceWeddingPage fillMiddleNameSpouse(String middleNameSpouse) {
         clearAndSendKeys(middleNameSpouseInput, middleNameSpouse);
         return this;
     }
 
-    public ServicePage fillDateOfBirthSpouse(String dateOfBirthSpouse) {
+    public ServiceWeddingPage fillDateOfBirthSpouse(String dateOfBirthSpouse) {
        clearAndSendKeys(dateOfBirthSpouseInput,dateOfBirthSpouse);
        return this;
     }
 
-    public ServicePage fillPassportSpouse(String passportSpouse) {
+    public ServiceWeddingPage fillPassportSpouse(String passportSpouse) {
        clearAndSendKeys(passportSpouseInput, passportSpouse);
        return this;
     }
 
     public void clickCompleteButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(completeButton)).click();
+        click(completeButton);
     }
 
     public void clickBackButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(backButton)).click();
+       click(backButton);
     }
 
     public void clickCloseButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(closeButton)).click();
+        click(closeButton);
     }
 }

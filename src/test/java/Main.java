@@ -1,30 +1,26 @@
+import driver.DriverManager;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import pages.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import pages.user.ApplicantPage;
+import pages.user.ChooseServicePage;
+import pages.user.CitizenPage;
+import pages.user.ServiceWeddingPage;
+
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        Properties properties = new Properties();
-        try (InputStream is = Main.class.getClassLoader().getResourceAsStream("application.properties")) {
-            properties.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        WebDriver driver = new ChromeDriver();
+
+        WebDriver driver = DriverManager.getDriver();
         try {
-            ((HasAuthentication) driver).register(UsernameAndPassword.of(properties.getProperty("username"), properties.getProperty("password")));
-            driver.get(properties.getProperty("URL"));
+            driver.get(DriverManager.getProperty("URL"));
             System.out.println("Успешно открыли страницу");
 
-            LoginPage loginPage = new LoginPage(driver);
+            LoginPage loginPage = new LoginPage();
             loginPage.clickButtonUser();
 
-            ApplicantPage applicantPage = new ApplicantPage(driver);
+            ApplicantPage applicantPage = new ApplicantPage();
             applicantPage.fillLastName("Сергеев").
                     fillName("Олег").
                     fillMiddlename("Викторович").
@@ -33,21 +29,21 @@ public class Main {
                     fillAddress("г.Брест, ул.Московская 320").
                     clickNextButton();
 
-            ChooseServicePage chooseServicePage = new ChooseServicePage(driver);
+            ChooseServicePage chooseServicePage = new ChooseServicePage();
             chooseServicePage.clickButtonWedding();
 
-            CitizenPage citizenPage = new CitizenPage(driver);
+            CitizenPage citizenPage = new CitizenPage();
             citizenPage.fillLastName("Сергеев").
                     fillName("Олег").
-                    fillMiddlename("Викторович").
+                    fillMiddleName("Викторович").
                     fillDateOfBirth("12.09.2005").
                     fillPassport("12345123").
                     fillGender("Муж").
                     fillAddress("г.Брест, ул.Московская 320").
                     clickNextButton();
 
-            ServicePage servicePage = new ServicePage(driver);
-            servicePage.fillDateOfRegistration("26.09.2026")
+            ServiceWeddingPage serviceWeddingPage = new ServiceWeddingPage();
+            serviceWeddingPage.fillDateOfRegistration("26.09.2026")
                     .fillNewLastName("Петрова")
                     .fillLastNameSpouse("Сергеев")
                     .fillNameSpouse("Олег")
@@ -56,7 +52,6 @@ public class Main {
                     .fillPassportSpouse("12784352617").
                     clickCompleteButton();
 
-            Thread.sleep(15000);
         } catch (Exception e) {
             System.err.println("Error");
         } finally {

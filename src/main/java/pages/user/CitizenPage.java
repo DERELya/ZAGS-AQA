@@ -1,38 +1,48 @@
-package pages;
+package pages.user;
 
-import org.openqa.selenium.WebDriver;
+import model.CitizenData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.BasePage;
 
-public class CitizenPage extends  BasePage {
+public class CitizenPage extends BasePage {
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Фамилия\"]/@for]")
     private WebElement lastNameInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Имя\"]/@for]")
-    private WebElement nameLabel;
+    private WebElement firstNameInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Отчество\"]/@for]")
-    private WebElement middlenameLabel;
+    private WebElement middleNameInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Дата рождения\"]/@for]")
-    private WebElement dateOfBirthLabel;
+    private WebElement dateOfBirthInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Номер паспорта\"]/@for]")
-    private WebElement passportLabel;
+    private WebElement passportInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Пол\"]/@for]")
-    private WebElement genderLabel;
+    private WebElement genderInput;
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Адрес прописки\"]/@for]")
-    private WebElement addressLabel;
+    private WebElement addressInput;
 
     @FindBy(xpath = "//button[text()=\"Далее\"]")
     private WebElement nextButton;
 
-    public CitizenPage(WebDriver driver) {
-       super(driver);
+    public CitizenPage() {
+       super();
+    }
+
+    public CitizenPage fillForm(CitizenData citizen) {
+        clearAndSendKeys(lastNameInput, citizen.lastName());
+        clearAndSendKeys(firstNameInput, citizen.firstName());
+        clearAndSendKeys(middleNameInput, citizen.middleName());
+        clearAndSendKeys(dateOfBirthInput, citizen.dateOfBirth());
+        clearAndSendKeys(passportInput, citizen.passportNumber());
+        clearAndSendKeys(addressInput, citizen.address());
+        return this;
     }
 
     public CitizenPage fillLastName(String lastName) {
@@ -41,36 +51,37 @@ public class CitizenPage extends  BasePage {
     }
 
     public CitizenPage fillName(String firstName) {
-        clearAndSendKeys(nameLabel, firstName);
+        clearAndSendKeys(firstNameInput, firstName);
         return this;
     }
 
-    public CitizenPage fillMiddlename(String middlename) {
-        clearAndSendKeys(middlenameLabel, middlename);
+    public CitizenPage fillMiddleName(String middleName) {
+        clearAndSendKeys(middleNameInput, middleName);
         return this;
     }
 
     public CitizenPage fillDateOfBirth(String dateOfBirth) {
-        clearAndSendKeys(dateOfBirthLabel, dateOfBirth);
+        clearAndSendKeys(dateOfBirthInput, dateOfBirth);
         return this;
     }
 
     public CitizenPage fillPassport(String passport) {
-        clearAndSendKeys(passportLabel, passport);
+        clearAndSendKeys(passportInput, passport);
         return this;
     }
 
     public CitizenPage fillGender(String gender) {
-       clearAndSendKeys(genderLabel, gender);
+       clearAndSendKeys(genderInput, gender);
        return this;
     }
 
     public CitizenPage fillAddress(String address) {
-        clearAndSendKeys(addressLabel, address);
+        clearAndSendKeys(addressInput, address);
         return this;
     }
 
-    public void clickNextButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(nextButton)).click();
+    public ServiceWeddingPage clickNextButton() {
+        click(nextButton);
+        return new ServiceWeddingPage();
     }
 }
