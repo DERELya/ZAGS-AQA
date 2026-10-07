@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
-public class AdminstrationApplicantions extends BasePage {
-    public  AdminstrationApplicantions() {super();}
+public class AdministrationApplications extends BasePage {
+    public AdministrationApplications() {super();}
 
     @FindBy(xpath = "//table")
     private WebElement applicationsTable;
