@@ -1,32 +1,44 @@
 import model.AdminData;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import pages.admin.AdminstrationApplicantions;
-import pages.admin.LoginAdminPage;
 import pages.LoginPage;
+import pages.user.ServiceBirthPage;
+import pages.user.StatusPage;
 
 public class AdminTest extends BaseTest{
-    String appNumber = "69956";
 
-    AdminData adminData = new AdminData(
-            "Сергеев", "Олег", "Викторович",
-            "+375672911256", "12345123", "12.04.2000"
-    );
+    private String appNumber;
 
+    @BeforeEach
+    void createTestApplication() {
+        appNumber = createApplication();
+        new StatusPage().clickCloseButton();
+    }
     @Test
     @DisplayName("1. Проверка статуса заявки")
     public void testStatusApplication() {
 
-
-        new LoginPage().clickButtonAdmin();
-        new LoginAdminPage().fillForm(adminData).clickNextButton();
-
-        String actualStatus = new  AdminstrationApplicantions().getStatusByApplicationNumber(appNumber);
+        String actualStatus = new LoginPage().clickButtonAdmin().fillForm(adminData).
+                clickNextButton()
+                .getStatusByApplicationNumber(appNumber);;
 
         Assertions.assertTrue(
                 actualStatus.contains("На рассмотрении"),
                 "Ожидался статус 'На рассмотрении', но получен: " + actualStatus
         );
+    }
+
+    private String createApplication() {
+        return  new LoginPage().clickButtonUser().
+                fillForm(applicant).
+                clickNextButton().
+                clickButtonBirth().
+                fillForm(citizen).
+                clickNextButton(ServiceBirthPage::new).
+                fillForm(birth).
+                clickCompleteButton().
+                getApplicationNumberMessage();
     }
 }

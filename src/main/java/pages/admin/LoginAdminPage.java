@@ -76,9 +76,9 @@ public class LoginAdminPage extends BasePage {
     }
 
 
-    public ChooseServicePage clickNextButton() {
+    public AdministrationApplications clickNextButton() {
         click(nextButton);
-        return new ChooseServicePage();
+        return new AdministrationApplications();
     }
 
     public void clickCloseButton() {

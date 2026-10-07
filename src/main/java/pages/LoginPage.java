@@ -2,6 +2,7 @@ package pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import pages.admin.LoginAdminPage;
 import pages.user.ApplicantPage;
 
 public class LoginPage extends BasePage {
@@ -19,7 +20,8 @@ public class LoginPage extends BasePage {
        click(buttonUser);
        return new ApplicantPage();
     }
-    public void clickButtonAdmin() {
+    public LoginAdminPage clickButtonAdmin() {
         click(buttonAdmin);
+        return new LoginAdminPage();
     }
 }

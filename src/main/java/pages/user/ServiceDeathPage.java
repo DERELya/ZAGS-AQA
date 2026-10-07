@@ -39,8 +39,9 @@ public class ServiceDeathPage extends BasePage {
         return this;
     }
 
-    public void clickCompleteButton() {
+    public StatusPage clickCompleteButton() {
         click(completeButton);
+        return new StatusPage();
     }
 
     public void clickBackButton() {

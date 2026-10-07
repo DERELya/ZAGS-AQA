@@ -27,19 +27,40 @@ public class DriverManager {
     }
     private DriverManager() {}
 
+
     public static WebDriver getDriver() {
         if (driverThreadLocal.get() == null) {
             WebDriver driver = new ChromeDriver();
             driver.manage().window().maximize();
             driverThreadLocal.set(driver);
             waitThreadLocal.set(new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS)));
-            ((HasAuthentication) driver).register(UsernameAndPassword.of(properties.getProperty("username"), properties.getProperty("password")));
+            String username = getCredential("username", "APP_USERNAME");
+            String password = getCredential("password", "APP_PASSWORD");
+
+            ((HasAuthentication) driver)
+                    .register(UsernameAndPassword.of(username, password));
         }
         return driverThreadLocal.get();
     }
 
     public static String getProperty(String key) {
         return properties.getProperty(key);
+    }
+
+    private static String getCredential(String propertyName, String envName) {
+        String value = System.getProperty(propertyName);
+
+        if (value == null || value.isBlank()) {
+            value = System.getenv(envName);
+        }
+
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    "Credential is not configured: " + propertyName
+            );
+        }
+
+        return value;
     }
     public static WebDriverWait getWait() {
         if (waitThreadLocal.get() == null) {

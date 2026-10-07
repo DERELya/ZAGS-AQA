@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
+import java.util.function.Supplier;
+
 public class CitizenPage extends BasePage {
 
     @FindBy(xpath = "//input[@id=//label[text()=\"Фамилия\"]/@for]")
@@ -41,6 +43,7 @@ public class CitizenPage extends BasePage {
         clearAndSendKeys(middleNameInput, citizen.middleName());
         clearAndSendKeys(dateOfBirthInput, citizen.dateOfBirth());
         clearAndSendKeys(passportInput, citizen.passportNumber());
+        clearAndSendKeys(genderInput, citizen.gender());
         clearAndSendKeys(addressInput, citizen.address());
         return this;
     }
@@ -80,8 +83,8 @@ public class CitizenPage extends BasePage {
         return this;
     }
 
-    public ServiceWeddingPage clickNextButton() {
+    public <T extends BasePage> T clickNextButton(Supplier<T> nextPage) {
         click(nextButton);
-        return new ServiceWeddingPage();
+        return nextPage.get();
     }
 }
