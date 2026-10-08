@@ -1,4 +1,4 @@
-import model.AdminData;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,7 +7,7 @@ import pages.LoginPage;
 import pages.user.ServiceBirthPage;
 import pages.user.StatusPage;
 
-public class AdminTest extends BaseTest{
+public class AdminTest extends BaseTest {
 
     private String appNumber;
 
@@ -16,13 +16,17 @@ public class AdminTest extends BaseTest{
         appNumber = createApplication();
         new StatusPage().clickCloseButton();
     }
+
     @Test
     @DisplayName("1. Проверка статуса заявки")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Проверка статуса заявления")
+    @Description("Проверка, что после создания заявления оно получает статус 'На рассмотрении'")
     public void testStatusApplication() {
-
         String actualStatus = new LoginPage().clickButtonAdmin().fillForm(adminData).
                 clickNextButton()
-                .getStatusByApplicationNumber(appNumber);;
+                .getStatusByApplicationNumber(appNumber);
+        ;
 
         Assertions.assertTrue(
                 actualStatus.contains("На рассмотрении"),
@@ -30,8 +34,9 @@ public class AdminTest extends BaseTest{
         );
     }
 
+    @Step("Создание заявления пользователем")
     private String createApplication() {
-        return  new LoginPage().clickButtonUser().
+        return new LoginPage().clickButtonUser().
                 fillForm(applicant).
                 clickNextButton().
                 clickButtonBirth().

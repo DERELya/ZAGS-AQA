@@ -1,5 +1,6 @@
 package pages.user;
 
+import io.qameta.allure.Step;
 import model.WeddingData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -40,8 +41,10 @@ public class ServiceWeddingPage extends BasePage {
         super();
     }
 
-
+    @Step("Заполнение данных услуги регистрация брака")
     public ServiceWeddingPage fillForm(WeddingData weddingData) {
+        logger.info("Начинаем заполнение данные услуги регистрация брака");
+
         clearAndSendKeys(dateOfRegistrationInput, weddingData.dateOfRegistration());
         clearAndSendKeys(newLastNameInput, weddingData.newLastName());
         clearAndSendKeys(lastNameSpouseInput, weddingData.lastNameSpouse());
@@ -49,6 +52,8 @@ public class ServiceWeddingPage extends BasePage {
         clearAndSendKeys(middleNameSpouseInput, weddingData.middleNameSpouse());
         clearAndSendKeys(dateOfBirthSpouseInput, weddingData.dateOfBirthSpouse());
         clearAndSendKeys(passportSpouseInput, weddingData.passportSpouse());
+
+        logger.info("Данные услуги регистрация брака успешно заполнены");
         return this;
     }
 
@@ -86,9 +91,11 @@ public class ServiceWeddingPage extends BasePage {
        clearAndSendKeys(passportSpouseInput, passportSpouse);
        return this;
     }
-
+    @Step("нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
+        logger.info("Нажимаем кнопку завершить");
         click(completeButton);
+        logger.info("Кнопка 'завершить' успешна нажата");
         return new StatusPage();
     }
 

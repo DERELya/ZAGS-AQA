@@ -9,11 +9,20 @@ target/
 out/
 src/main/resources/*
 !src/main/resources/application.properties.example
-.allure/
+!src/main/resources/log4j2.xml
+!src/main/resources/allure.properties
 *.iws
 *.iml
 *.ipr
 
+### Logs ###
+logs/
+*.log
+*.log.gz
+
+### Allure ###
+allure-results/
+.allure/
 ### Eclipse ###
 .apt_generated
 .classpath

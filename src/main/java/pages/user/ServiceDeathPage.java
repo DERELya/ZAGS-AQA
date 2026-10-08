@@ -1,5 +1,6 @@
 package pages.user;
 
+import io.qameta.allure.Step;
 import model.DeathData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -24,9 +25,12 @@ public class ServiceDeathPage extends BasePage {
 
     public ServiceDeathPage() {super();}
 
+    @Step("Заполнение данных услуги регистрация смерти")
     public ServiceDeathPage fillForm(DeathData deathData) {
+        logger.info("Начинаем заполнение данные услуги регистрация смерти");
         clearAndSendKeys(dateOfDeathInput, deathData.dateOfDeath());
         clearAndSendKeys(placeOfDeathInput, deathData.placeOfDeath());
+        logger.info("Данные услуги регистрация смерти успешно заполнены");
         return this;
     }
     public ServiceDeathPage fillDateOfDeath(String dateOfDeath) {
@@ -38,9 +42,11 @@ public class ServiceDeathPage extends BasePage {
         clearAndSendKeys(placeOfDeathInput, placeOfDeath);
         return this;
     }
-
+    @Step("нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
+        logger.info("Нажимаем кнопку завершить");
         click(completeButton);
+        logger.info("Кнопка 'завершить' успешна нажата");
         return new StatusPage();
     }
 
