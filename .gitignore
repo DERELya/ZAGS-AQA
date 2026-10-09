@@ -8,7 +8,8 @@ target/
 .idea/
 out/
 src/main/resources/*
-!src/main/resources/application.properties
+!src/main/resources/application.properties.example
+.allure/
 *.iws
 *.iml
 *.ipr

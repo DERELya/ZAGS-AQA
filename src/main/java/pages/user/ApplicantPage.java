@@ -1,18 +1,17 @@
-package pages;
+package pages.user;
 
-import org.openqa.selenium.WebDriver;
+import model.ApplicantData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.BasePage;
 
-
-public class ApplicantPage extends  BasePage {
+public class ApplicantPage extends BasePage {
 
     @FindBy(xpath="//input[contains(@placeholder, \"фамилию\")]")
     private WebElement lastNameInput;
 
     @FindBy(xpath="//input[contains(@placeholder, \"имя\")]")
-    private WebElement nameInput;
+    private WebElement firstNameInput;
 
     @FindBy(xpath="//input[contains(@placeholder, \"отчество\")]")
     private WebElement middleNameInput;
@@ -33,18 +32,26 @@ public class ApplicantPage extends  BasePage {
     private WebElement closeButton;
 
 
-    public ApplicantPage(WebDriver driver) {
-        super(driver);
+    public ApplicantPage() {
+        super();
     }
 
-
+    public ApplicantPage fillForm(ApplicantData applicant) {
+        clearAndSendKeys(lastNameInput, applicant.lastName());
+        clearAndSendKeys(firstNameInput, applicant.firstName());
+        clearAndSendKeys(middleNameInput, applicant.middleName());
+        clearAndSendKeys(phoneNumberInput, applicant.phoneNumber());
+        clearAndSendKeys(passportInput, applicant.passportNumber());
+        clearAndSendKeys(addressInput, applicant.address());
+        return this;
+    }
     public ApplicantPage fillLastName(String lastName) {
         clearAndSendKeys(lastNameInput, lastName);
         return this;
     }
 
     public ApplicantPage fillName(String firstName) {
-        clearAndSendKeys(nameInput, firstName);
+        clearAndSendKeys(firstNameInput, firstName);
         return this;
     }
 
@@ -67,10 +74,11 @@ public class ApplicantPage extends  BasePage {
         clearAndSendKeys(addressInput, address);
         return this;
    }
-   public void clickNextButton() {
-       wait.until(ExpectedConditions.elementToBeClickable(nextButton)).click();
+   public ChooseServicePage clickNextButton() {
+       click(nextButton);
+       return new  ChooseServicePage();
    }
    public void clickCloseButton(){
-        wait.until(ExpectedConditions.elementToBeClickable(closeButton)).click();
+        click(closeButton);
    }
 }
