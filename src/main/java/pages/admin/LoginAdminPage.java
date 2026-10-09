@@ -35,10 +35,8 @@ public class LoginAdminPage extends BasePage {
         super();
     }
 
-    @Step("Заполнение данных администратора")
+    @Step("Заполнение данных администратора: {admin.lastName}, {admin.firstName}, {admin.middleName}")
     public LoginAdminPage fillForm(AdminData admin) {
-
-        logger.info("Начинаем заполнение данных администратора");
 
         clearAndSendKeys(lastNameInput, admin.lastName());
         clearAndSendKeys(firstNameInput, admin.firstName());
@@ -46,8 +44,6 @@ public class LoginAdminPage extends BasePage {
         clearAndSendKeys(phoneNumberInput, admin.phoneNumber());
         clearAndSendKeys(passportInput, admin.passport());
         clearAndSendKeys(dateOfBirthInput, admin.dateOfBirth());
-
-        logger.info("Данные администратора успешно заполнены");
 
         return this;
     }
@@ -84,9 +80,7 @@ public class LoginAdminPage extends BasePage {
 
     @Step("Нажатие кнопки далее")
     public AdministrationApplications clickNextButton() {
-        logger.info("Нажимаем кнопку 'Далее'");
         click(nextButton);
-        logger.info("Кнопка 'Далее' успешна нажата");
         return new AdministrationApplications();
     }
 

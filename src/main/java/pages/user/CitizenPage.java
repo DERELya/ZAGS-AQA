@@ -38,9 +38,8 @@ public class CitizenPage extends BasePage {
        super();
     }
 
-    @Step("Заполнение данных гражданина")
+    @Step("Заполнение данных гражданина: {citizen.lastName}, {citizen.firstName}, {citizen.middleName}")
     public CitizenPage fillForm(CitizenData citizen) {
-        logger.info("Начинаем заполнение данных гражданина");
 
         clearAndSendKeys(lastNameInput, citizen.lastName());
         clearAndSendKeys(firstNameInput, citizen.firstName());
@@ -50,7 +49,6 @@ public class CitizenPage extends BasePage {
         clearAndSendKeys(genderInput, citizen.gender());
         clearAndSendKeys(addressInput, citizen.address());
 
-        logger.info("Данные гражданина успешно заполнены");
         return this;
     }
 
@@ -90,9 +88,7 @@ public class CitizenPage extends BasePage {
     }
     @Step("нажатие кнопки далее")
     public <T extends BasePage> T clickNextButton(Supplier<T> nextPage) {
-        logger.info("Нажимаем кнопку 'Далее'");
         click(nextButton);
-        logger.info("Кнопка 'Далее' успешна нажата");
 
         return nextPage.get();
     }

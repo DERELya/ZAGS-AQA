@@ -41,9 +41,8 @@ public class ServiceWeddingPage extends BasePage {
         super();
     }
 
-    @Step("Заполнение данных услуги регистрация брака")
+    @Step("Заполнение данных услуги регистрация брака: {weddingData.dateOfRegistration}, {weddingData.newLastName}, {weddingData.lastNameSpouse}, {nameSpouse}")
     public ServiceWeddingPage fillForm(WeddingData weddingData) {
-        logger.info("Начинаем заполнение данные услуги регистрация брака");
 
         clearAndSendKeys(dateOfRegistrationInput, weddingData.dateOfRegistration());
         clearAndSendKeys(newLastNameInput, weddingData.newLastName());
@@ -53,7 +52,6 @@ public class ServiceWeddingPage extends BasePage {
         clearAndSendKeys(dateOfBirthSpouseInput, weddingData.dateOfBirthSpouse());
         clearAndSendKeys(passportSpouseInput, weddingData.passportSpouse());
 
-        logger.info("Данные услуги регистрация брака успешно заполнены");
         return this;
     }
 
@@ -93,9 +91,7 @@ public class ServiceWeddingPage extends BasePage {
     }
     @Step("нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
-        logger.info("Нажимаем кнопку завершить");
         click(completeButton);
-        logger.info("Кнопка 'завершить' успешна нажата");
         return new StatusPage();
     }
 

@@ -8,7 +8,9 @@ import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
 public class AdministrationApplications extends BasePage {
-    public AdministrationApplications() {super();}
+    public AdministrationApplications() {
+        super();
+    }
 
     @FindBy(xpath = "//table")
     private WebElement applicationsTable;
@@ -17,7 +19,7 @@ public class AdministrationApplications extends BasePage {
         return new TableElement(applicationsTable);
     }
 
-    @Step("Получение статуса заявки")
+    @Step("Получение статуса заявки №{appNumber}")
     public String getStatusByApplicationNumber(String appNumber) {
         WebElement row = getTable().getRowByText(appNumber);
         return row.findElements(By.xpath("./td")).get(4).getText().trim();

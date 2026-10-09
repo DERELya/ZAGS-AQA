@@ -1,3 +1,5 @@
+package ui;
+
 import io.qameta.allure.Description;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
@@ -6,24 +8,24 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
-import pages.user.ServiceBirthPage;
+import pages.user.ServiceWeddingPage;
 
-public class RegistrationBirthTest extends BaseTest {
+public class RegistrationWeddingTest extends BaseTest {
 
     @Test
-    @DisplayName("1. Позитивный сценарий: Успешное заполнение всех шагов и подача заявки на регистрацию рождения")
+    @DisplayName("1. Позитивный сценарий: Успешное заполнение всех шагов и подача заявки на регистрацию брака")
     @Severity(SeverityLevel.CRITICAL)
-    @Story("Проверка создания заявки на регистрацию рождения")
-    @Description("Проверка, что правильно создается заявка на регистрацию рождения")
-    public void testRegistrationDeath() {
+    @Story("Проверка создания заявки на регистрацию брака")
+    @Description("Проверка, что правильно создается заявка на регистрацию брака")
+    public void testSuccessfulWedding() {
 
         boolean isMessageDisplayed = new LoginPage().clickButtonUser().
                 fillForm(applicant).
                 clickNextButton().
-                clickButtonBirth().
+                clickButtonWedding().
                 fillForm(citizen).
-                clickNextButton(ServiceBirthPage::new).
-                fillForm(birth).
+                clickNextButton(ServiceWeddingPage::new).
+                fillForm(wedding).
                 clickCompleteButton().
                 isSuccessMessageDisplayed("Спасибо за обращение!");
 

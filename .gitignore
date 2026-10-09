@@ -7,10 +7,6 @@ target/
 ### IntelliJ IDEA ###
 .idea/
 out/
-src/main/resources/*
-!src/main/resources/application.properties.example
-!src/main/resources/log4j2.xml
-!src/main/resources/allure.properties
 *.iws
 *.iml
 *.ipr

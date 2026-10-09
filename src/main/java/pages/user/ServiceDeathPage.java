@@ -25,12 +25,10 @@ public class ServiceDeathPage extends BasePage {
 
     public ServiceDeathPage() {super();}
 
-    @Step("Заполнение данных услуги регистрация смерти")
+    @Step("Заполнение данных услуги регистрация смерти: {deathData.dateOfDeath},{deathData.placeOfDeath}")
     public ServiceDeathPage fillForm(DeathData deathData) {
-        logger.info("Начинаем заполнение данные услуги регистрация смерти");
         clearAndSendKeys(dateOfDeathInput, deathData.dateOfDeath());
         clearAndSendKeys(placeOfDeathInput, deathData.placeOfDeath());
-        logger.info("Данные услуги регистрация смерти успешно заполнены");
         return this;
     }
     public ServiceDeathPage fillDateOfDeath(String dateOfDeath) {
@@ -44,9 +42,9 @@ public class ServiceDeathPage extends BasePage {
     }
     @Step("нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
-        logger.info("Нажимаем кнопку завершить");
+
         click(completeButton);
-        logger.info("Кнопка 'завершить' успешна нажата");
+
         return new StatusPage();
     }
 

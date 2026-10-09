@@ -44,23 +44,10 @@
 
 
     <Loggers>
-
-
-        <Logger name="pages" level="INFO" additivity="false">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
-        </Logger>
-
-        <Logger name="tests" level="INFO" additivity="false">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
-        </Logger>
-
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>
-
     </Loggers>
 
 </Configuration>

@@ -19,31 +19,13 @@ public class LoginPage extends BasePage {
 
     @Step("Нажатие кнопки 'Войти как пользователь'")
     public ApplicantPage clickButtonUser() {
-        logger.info("Нажимаем кнопку входа пользователя");
-
-        try {
-            click(buttonUser);
-            logger.info("Кнопка 'Войти как пользователь' успешно нажата");
-        } catch (Exception e) {
-            logger.error("Не удалось нажать кнопку 'Войти как пользователь'", e);
-            throw e;
-        }
-
+        click(buttonUser);
         return new ApplicantPage();
     }
 
     @Step("Нажатие кнопки 'Войти как администратор'")
     public LoginAdminPage clickButtonAdmin() {
-        logger.info("Нажимаем кнопку входа администратора");
-
-        try {
-            click(buttonAdmin);
-            logger.info("Кнопка 'Войти как администратор' успешно нажата");
-        } catch (Exception e) {
-            logger.error("Не удалось нажать кнопку 'Войти как администратор'", e);
-            throw e;
-        }
-
+        click(buttonAdmin);
         return new LoginAdminPage();
     }
 }

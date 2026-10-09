@@ -32,15 +32,15 @@ public class ServiceBirthPage extends BasePage {
 
     public ServiceBirthPage() {super();}
 
-    @Step("Заполнение данных услуги регистрация рождения")
+    @Step("Заполнение данных услуги регистрация рождения: {birthData.placeOfBirth}, {birthData.mother}, {birthData.dad} ")
     public ServiceBirthPage fillForm(BirthData birthData) {
-        logger.info("Начинаем заполнение данные услуги регистрация рождения");
+
         clearAndSendKeys(placeOfBirthInput, birthData.placeOfBirth());
         clearAndSendKeys(motherInput, birthData.mother());
         clearAndSendKeys(dadInput, birthData.dad());
         clearAndSendKeys(grandmotherInput, birthData.grandmother());
         clearAndSendKeys(granddadInput, birthData.granddad());
-        logger.info("Данные услуги регистрация рождения успешно заполнены");
+
         return this;
     }
     public ServiceBirthPage fillPlaceOfBirth(String placeOfBirth) {
@@ -64,11 +64,10 @@ public class ServiceBirthPage extends BasePage {
         clearAndSendKeys(granddadInput, granddad);
         return this;
     }
-    @Step("нажатие кнопки завершить")
+    @Step("Нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
-        logger.info("Нажимаем кнопку завершить");
+
         click(completeButton);
-        logger.info("Кнопка 'завершить' успешна нажата");
         return new StatusPage();
     }
 

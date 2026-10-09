@@ -37,9 +37,8 @@ public class ApplicantPage extends BasePage {
         super();
     }
 
-    @Step("Заполнение данных заявителя")
+    @Step("Заполнение данных заявителя: {applicant.lastName}, {applicant.firstName}, {applicant.passportNumber}")
     public ApplicantPage fillForm(ApplicantData applicant) {
-        logger.info("Начинаем заполнение данных заявителя");
 
         clearAndSendKeys(lastNameInput, applicant.lastName());
         clearAndSendKeys(firstNameInput, applicant.firstName());
@@ -47,9 +46,6 @@ public class ApplicantPage extends BasePage {
         clearAndSendKeys(phoneNumberInput, applicant.phoneNumber());
         clearAndSendKeys(passportInput, applicant.passportNumber());
         clearAndSendKeys(addressInput, applicant.address());
-
-        logger.info("Данные заявителя успешно заполнены");
-
         return this;
     }
     public ApplicantPage fillLastName(String lastName) {
@@ -83,9 +79,7 @@ public class ApplicantPage extends BasePage {
    }
     @Step("Нажатие кнопки далее")
    public ChooseServicePage clickNextButton() {
-        logger.info("Нажимаем кнопку 'Далее'");
         click(nextButton);
-        logger.info("Кнопка 'Далее' успешна нажата");
        return new  ChooseServicePage();
    }
    public void clickCloseButton(){

@@ -22,25 +22,19 @@ public class ChooseServicePage extends BasePage {
 
     @Step("Нажатие кнопки 'Регистрация брака'")
     public CitizenPage clickButtonWedding() {
-        logger.info("Нажимаем кнопку 'Регистрация брака'");
         click(buttonWedding);
-        logger.info("Кнопка 'Регистрация брака' успешна нажата");
         return new CitizenPage();
     }
 
     @Step("Нажатие кнопки 'Регистрация рождения'")
     public CitizenPage clickButtonBirth() {
-        logger.info("Нажимаем кнопку 'Регистрация рождения'");
         click(buttonBirth);
-        logger.info("Кнопка 'Регистрация рождения' успешна нажата");
         return new CitizenPage();
     }
 
     @Step("Нажатие кнопки 'Регистрация смерти'")
     public CitizenPage clickButtonDeath() {
-        logger.info("Нажимаем кнопку 'Регистрация смерти'");
         click(buttonDeath);
-        logger.info("Кнопка 'Регистрация смерти' успешна нажата");
 
         return new CitizenPage();
     }

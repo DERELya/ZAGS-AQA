@@ -21,14 +21,12 @@ public class StatusPage extends BasePage {
     @FindBy(xpath = "//button[text()=\"Закрыть\"]")
     private WebElement closeButton;
 
-    @Step("Проверка соответствия текста")
+    @Step("Проверка сообщения '{expectedText}'")
     public boolean isSuccessMessageDisplayed(String expectedText) {
-        logger.info("Проверяем наличие сообщения: '{}'", expectedText);
         try {
             By locator = By.xpath("//span[contains(text(), '" + expectedText + "')]");
             return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
         } catch (org.openqa.selenium.TimeoutException e) {
-            logger.warn("Сообщение '{}' не найдено за отведённое время", expectedText);
             return false;
         }
     }
@@ -41,19 +39,13 @@ public class StatusPage extends BasePage {
                 applicationNumberMessage.getText().matches(".*№\\s*\\d+.*")
         );
         String text = applicationNumberMessage.getText();
-        logger.info("Получен текст сообщения: '{}'", text);
-
         Pattern pattern = Pattern.compile("№\\s*(\\d+)");
         Matcher matcher = pattern.matcher(text);
 
         if (matcher.find()) {
             String appNumber = matcher.group(1);
-
-            logger.info("Номер заявки успешно получен: {}", appNumber);
-
             return appNumber;
         }
-        logger.error("Не удалось найти номер заявки в тексте: '{}'", text);
 
         throw new IllegalStateException(
                 "Не удалось найти номер заявки в тексте: " + text
@@ -62,8 +54,6 @@ public class StatusPage extends BasePage {
 
     @Step("нажатие кнопки закрыть")
     public void clickCloseButton() {
-        logger.info("Нажимаем кнопку закрыть");
         click(closeButton);
-        logger.info("Кнопка 'Закрыть' успешно нажата");
     }
 }
