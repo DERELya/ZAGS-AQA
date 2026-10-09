@@ -1,5 +1,6 @@
 package pages.user;
 
+import io.qameta.allure.Step;
 import model.ApplicantData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -36,7 +37,9 @@ public class ApplicantPage extends BasePage {
         super();
     }
 
+    @Step("Заполнение данных заявителя: {applicant.lastName}, {applicant.firstName}, {applicant.passportNumber}")
     public ApplicantPage fillForm(ApplicantData applicant) {
+
         clearAndSendKeys(lastNameInput, applicant.lastName());
         clearAndSendKeys(firstNameInput, applicant.firstName());
         clearAndSendKeys(middleNameInput, applicant.middleName());
@@ -74,8 +77,9 @@ public class ApplicantPage extends BasePage {
         clearAndSendKeys(addressInput, address);
         return this;
    }
+    @Step("Нажатие кнопки далее")
    public ChooseServicePage clickNextButton() {
-       click(nextButton);
+        click(nextButton);
        return new  ChooseServicePage();
    }
    public void clickCloseButton(){

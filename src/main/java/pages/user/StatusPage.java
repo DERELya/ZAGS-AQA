@@ -1,5 +1,6 @@
 package pages.user;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -10,7 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StatusPage extends BasePage {
-    public StatusPage() {super();}
+    public StatusPage() {
+        super();
+    }
 
     @FindBy(xpath = "//span[contains(text(), 'Ваша заявка')]")
     private WebElement applicationNumberMessage;
@@ -18,6 +21,7 @@ public class StatusPage extends BasePage {
     @FindBy(xpath = "//button[text()=\"Закрыть\"]")
     private WebElement closeButton;
 
+    @Step("Проверка сообщения '{expectedText}'")
     public boolean isSuccessMessageDisplayed(String expectedText) {
         try {
             By locator = By.xpath("//span[contains(text(), '" + expectedText + "')]");
@@ -27,6 +31,7 @@ public class StatusPage extends BasePage {
         }
     }
 
+
     public String getApplicationNumberMessage() {
         wait.until(ExpectedConditions.visibilityOf(applicationNumberMessage));
 
@@ -34,12 +39,12 @@ public class StatusPage extends BasePage {
                 applicationNumberMessage.getText().matches(".*№\\s*\\d+.*")
         );
         String text = applicationNumberMessage.getText();
-
         Pattern pattern = Pattern.compile("№\\s*(\\d+)");
         Matcher matcher = pattern.matcher(text);
 
         if (matcher.find()) {
-            return matcher.group(1);
+            String appNumber = matcher.group(1);
+            return appNumber;
         }
 
         throw new IllegalStateException(
@@ -47,6 +52,7 @@ public class StatusPage extends BasePage {
         );
     }
 
+    @Step("нажатие кнопки закрыть")
     public void clickCloseButton() {
         click(closeButton);
     }
