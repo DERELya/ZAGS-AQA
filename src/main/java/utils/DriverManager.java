@@ -16,8 +16,17 @@ public class DriverManager {
     private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
     private static final ThreadLocal<WebDriverWait> waitThreadLocal = new ThreadLocal<>();
     private static final int TIMEOUT_SECONDS = 10;
+    private static final Properties properties=new Properties();
 
+    static {
+        try (InputStream is = DriverManager.class.getClassLoader().getResourceAsStream("application.properties")) {
+            properties.load(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     private DriverManager() {}
+
 
     public static WebDriver getDriver() {
         if (driverThreadLocal.get() == null) {
@@ -34,6 +43,9 @@ public class DriverManager {
         return driverThreadLocal.get();
     }
 
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
 
     private static String getCredential(String propertyName, String envName) {
         String value = System.getProperty(propertyName);
