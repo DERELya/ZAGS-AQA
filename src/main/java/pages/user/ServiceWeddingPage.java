@@ -1,7 +1,7 @@
 package pages.user;
 
 import io.qameta.allure.Step;
-import model.WeddingData;
+import model.data.WeddingData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;

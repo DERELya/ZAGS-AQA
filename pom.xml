@@ -18,13 +18,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <selenium.version>4.49.0</selenium.version>
+        <selenium.version>4.51.0</selenium.version>
         <junit.version>5.14.0</junit.version>
         <allure.version>2.35.5</allure.version>
         <allure.maven.version>3.1.0</allure.maven.version>
-        <aspectj.version>1.9.25</aspectj.version>
+        <aspectj.version>1.9.25.1</aspectj.version>
         <log4j.version>2.26.1</log4j.version>
-
+        <lombok.version>1.18.42</lombok.version>
+        <jackson.versionn>2.22.3</jackson.versionn>
+        <rest-assured.version>5.5.6</rest-assured.version>
         <surefire.version>3.5.4</surefire.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
     </properties>
@@ -83,23 +85,23 @@
             <version>${log4j.version}</version>
         </dependency>
 
-      <dependency>
-        <groupId>io.rest-assured</groupId>
-        <artifactId>rest-assured</artifactId>
-        <version>5.5.6</version>
-      </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+        </dependency>
 
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.42</version>
-      </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.22.3</version>
-      </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.versionn}</version>
+        </dependency>
 
     </dependencies>
 
@@ -113,13 +115,13 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                  <annotationProcessorPaths>
-                    <path>
-                      <groupId>org.projectlombok</groupId>
-                      <artifactId>lombok</artifactId>
-                      <version>1.18.42</version>
-                    </path>
-                  </annotationProcessorPaths>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.42</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -129,7 +131,9 @@
                 <version>${surefire.version}</version>
 
                 <configuration>
-                    <argLine>-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"</argLine>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
                 </configuration>
 
                 <dependencies>
