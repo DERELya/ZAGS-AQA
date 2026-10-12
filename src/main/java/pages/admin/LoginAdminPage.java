@@ -1,7 +1,7 @@
 package pages.admin;
 
 import io.qameta.allure.Step;
-import model.AdminData;
+import model.data.AdminData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;

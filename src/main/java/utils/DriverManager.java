@@ -6,10 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
-import java.util.Properties;
 
 public class DriverManager {
 
@@ -17,7 +15,9 @@ public class DriverManager {
     private static final ThreadLocal<WebDriverWait> waitThreadLocal = new ThreadLocal<>();
     private static final int TIMEOUT_SECONDS = 10;
 
-    private DriverManager() {}
+    private DriverManager() {
+    }
+
 
     public static WebDriver getDriver() {
         if (driverThreadLocal.get() == null) {
@@ -27,29 +27,14 @@ public class DriverManager {
             waitThreadLocal.set(new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS)));
             String username = TestConfig.getUsername();
             String password = TestConfig.getPassword();
-
-            ((HasAuthentication) driver)
-                    .register(UsernameAndPassword.of(username, password));
+            String host = URI.create(TestConfig.getBaseUrl()).getHost();
+            ((HasAuthentication) driver).register(
+                    uri -> host.equalsIgnoreCase(uri.getHost()),
+                    UsernameAndPassword.of(username, password));
         }
         return driverThreadLocal.get();
     }
 
-
-    private static String getCredential(String propertyName, String envName) {
-        String value = System.getProperty(propertyName);
-
-        if (value == null || value.isBlank()) {
-            value = System.getenv(envName);
-        }
-
-        if (value == null || value.isBlank()) {
-            throw new IllegalStateException(
-                    "Credential is not configured: " + propertyName
-            );
-        }
-
-        return value;
-    }
     public static WebDriverWait getWait() {
         if (waitThreadLocal.get() == null) {
             getDriver();

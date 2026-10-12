@@ -1,15 +1,14 @@
 package ui;
 
-import io.qameta.allure.Description;
-import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
 import pages.user.ServiceDeathPage;
 
+@Epic("ZAGS")
+@Feature("UI — Проверка создания заявки на регистрацию смерти")
 public class RegistrationDeathTest extends BaseTest {
 
     @Test

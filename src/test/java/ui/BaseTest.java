@@ -1,13 +1,13 @@
 package ui;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import utils.AllureFailureExtension;
-import utils.DriverManager;
-import model.*;
+import model.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.AllureFailureExtension;
+import utils.DriverManager;
 import utils.TestConfig;
 
 import java.time.Duration;

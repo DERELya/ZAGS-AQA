@@ -1,4 +1,4 @@
-package model;
+package model.data;
 
 public record WeddingData(
         String dateOfRegistration,

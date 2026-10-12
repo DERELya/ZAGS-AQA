@@ -1,11 +1,12 @@
-package model;
+package model.data;
 
-public record ApplicantData(
+public record CitizenData(
         String lastName,
         String firstName,
         String middleName,
-        String phoneNumber,
+        String dateOfBirth,
         String passportNumber,
+        String gender,
         String address
 ) {
 }

@@ -9,6 +9,8 @@ import pages.LoginPage;
 import pages.user.ServiceBirthPage;
 import pages.user.StatusPage;
 
+@Epic("ZAGS")
+@Feature("UI — Проверка статуса заявки в администрирование заявок")
 public class AdminTest extends BaseTest {
 
     private String appNumber;
@@ -20,7 +22,7 @@ public class AdminTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("1. Проверка статуса заявки")
+    @DisplayName("Проверка статуса заявки")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Проверка статуса заявления")
     @Description("Проверка, что после создания заявления оно получает статус 'На рассмотрении'")
