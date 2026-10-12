@@ -22,8 +22,6 @@ public class GetApplicationsTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Проверяет получение первой страницы заявок через GET /getApplications:")
     void getApplications() {
-
-
         ApplicationsResponseDto response =
                 getApplicationsPage(PAGE, LIMIT);
 

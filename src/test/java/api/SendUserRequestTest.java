@@ -27,7 +27,6 @@ public class SendUserRequestTest {
     void sendUserRequest() {
 
         ApplicationRequestDto application = createDeathApplication();
-
         ApplicationResponseDto<AppForDeathDto> response =
                 given()
                         .spec(RequestSpecs.baseRequestSpec())
