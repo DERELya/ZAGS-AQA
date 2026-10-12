@@ -88,9 +88,9 @@ public class RequestProcessTest {
                         "dateofapplication отсутствует"
                 ),
 
-                () -> assertNotNull(
+                () -> assertEquals(TypeOfApplication.DEATH.getValue(),
                         application.getKindOfApplication(),
-                        "kindofapplication отсутствует"
+                        "kindofapplication не соответствует возможным"
                 ),
 
                 () -> assertEquals(
