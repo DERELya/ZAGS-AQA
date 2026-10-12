@@ -25,9 +25,9 @@
         <aspectj.version>1.9.25.1</aspectj.version>
         <log4j.version>2.26.1</log4j.version>
         <lombok.version>1.18.42</lombok.version>
-        <jackson.versionn>2.22.3</jackson.versionn>
-        <rest-assured.version>5.5.6</rest-assured.version>
+        <jackson.version>2.22.3</jackson.version>
         <surefire.version>3.5.4</surefire.version>
+        <rest-assured.version>6.0.1</rest-assured.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
     </properties>
 
@@ -69,6 +69,12 @@
 
         <dependency>
             <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
             <artifactId>allure-jupiter</artifactId>
             <version>${allure.version}</version>
         </dependency>
@@ -100,7 +106,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.versionn}</version>
+            <version>${jackson.version}</version>
         </dependency>
 
     </dependencies>

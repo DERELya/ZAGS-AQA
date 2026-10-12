@@ -1,15 +1,17 @@
 package api;
 
+import api.dto.AdministrationApplicantionDto;
+import api.dto.ApplicationDto;
+import api.dto.ApplicationResponseDto;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
-import model.dto.*;
-import model.specs.RequestSpecs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import utils.TestDataFactory;
+import utils.ZagsApiSteps;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,9 +27,7 @@ public class RequestProcessTest {
     @DisplayName("Позитивный сценарий одобрения заявки")
     @Story("Одобрение заявки на регистрацию смерти")
     @Severity(SeverityLevel.CRITICAL)
-    @Description(
-            "Создаёт администратора и заявку на регистрацию смерти, проверяет одобрение заявки через POST /requestProcess"
-    )
+    @Description("Создаёт администратора и заявку на регистрацию смерти, проверяет одобрение заявки через POST /requestProcess")
     void approveApplication() {
 
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
@@ -40,12 +40,12 @@ public class RequestProcessTest {
                         .body(body)
                         .when()
                         .post("/requestProcess")
-
                         .then()
-                        .statusCode(200)
+                        .spec(ResponseSpecs.successResponse())
                         .extract()
                         .as(new TypeRef<ApplicationResponseDto<ApplicationDto>>() {
                         });
+
         ApplicationDto application = response.getData();
 
         assertNotNull(response.getData(), "заявка пустая");
@@ -101,67 +101,60 @@ public class RequestProcessTest {
         );
     }
 
+    @Test
+    @DisplayName("Администрирование заявки с недопустимым действием")
+    @Story("Валидация поля action")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Проверяем, что API отклоняет заявку, в которой action недопустимый.")
+    void administrationApplicationWithoutInvalidAction() {
+        AdministrationApplicantionDto body = new AdministrationApplicantionDto();
+        body.setAction("qweyui");
+        body.setStaffid(staffId);
+        body.setApplId(applId);
+        given()
+                .spec(RequestSpecs.baseRequestSpec())
+                .body(body)
+                .when()
+                .post("/requestProcess")
+                .then()
+                .log()
+                .ifValidationFails()
+                .statusCode(400);
+
+
+    }
+
+    @Test
+    @DisplayName("Администрирование заявки без авторизации")
+    @Story("тестирование безопасности")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Проверяем, что API отклоняет заявку, без авторизации")
+    void administrationApplicationWithoutAuth() {
+        AdministrationApplicantionDto body = new AdministrationApplicantionDto();
+        body.setAction("approved");
+        body.setStaffid(staffId);
+        body.setApplId(applId);
+        given()
+                .spec(RequestSpecs.unauthenticatedRequestSpec())
+                .body(body)
+                .when()
+                .post("/requestProcess")
+                .then()
+                .log()
+                .ifValidationFails()
+                .statusCode(401);
+    }
+
     @BeforeAll
     static void setUp() {
-        AdminRequestDto admin = new AdminRequestDto();
+        staffId = ZagsApiSteps.createAdministrator(
+                TestDataFactory.adminRequest()
+        );
 
-        admin.setPersonalLastName("Сергеев");
-        admin.setPersonalFirstName("Виктор");
-        admin.setPersonalMiddleName("Олегович");
-        admin.setPersonalPhoneNumber("37526785632");
-        admin.setPersonalNumberOfPassport("12378612");
-        admin.setDateOfBirth("2005-11-12");
-
-        ApplicationRequestDto application = new ApplicationRequestDto();
-        application.setMode("death");
-        application.setPersonalLastName("Сергеев");
-
-        application.setPersonalFirstName("Олег");
-        application.setPersonalMiddleName("Олегович");
-        application.setPersonalPhoneNumber("37526785632");
-        application.setPersonalNumberOfPassport("12378612");
-        application.setPersonalAddress("Брест");
-        application.setCitizenLastName("Сергеев");
-        application.setCitizenFirstName("Олег");
-        application.setCitizenMiddleName("Олегович");
-        application.setCitizenGender("Муж");
-        application.setCitizenBirthDate("2005-11-12");
-        application.setCitizenAddress("Брест");
-        application.setCitizenNumberOfPassport("32785631");
-        application.setDeath_placeOfDeath("Брест");
-        application.setDeath_dateOfDeath(LocalDate.now().minusDays(10).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-
-
-        staffId = createAdministrator(admin);
-        applId = createApplication(application);
+        applId = ZagsApiSteps.createDeathApplication(
+                TestDataFactory.deathApplication()
+        );
 
     }
 
-    @Step("Создаем администратора и сохраняем его ID")
-    public static long createAdministrator(AdminRequestDto requestDto) {
-        return given()
-                .spec(RequestSpecs.baseRequestSpec())
-                .body(requestDto)
-                .when()
-                .post("/sendAdminRequest")
-                .then()
-                .statusCode(200)
-                .extract()
-                .jsonPath()
-                .getLong("data.staffid");
-    }
-
-    @Step("Создаем заявку и сохраняем ее ID")
-    public static long createApplication(ApplicationRequestDto requestDto) {
-        return given()
-                .spec(RequestSpecs.baseRequestSpec())
-                .body(requestDto)
-                .when()
-                .post("/sendUserRequest")
-                .then()
-                .statusCode(200)
-                .extract()
-                .jsonPath()
-                .getLong("data.applicationid");
-    }
 }

@@ -1,6 +1,8 @@
-package model.dto;
+package api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import model.data.Gender;
 
 @Data
 public class ApplicationRequestDto {
@@ -12,26 +14,44 @@ public class ApplicationRequestDto {
     private String personalPhoneNumber;
     private String personalNumberOfPassport;
     private String personalAddress;
+
     private String citizenLastName;
     private String citizenFirstName;
     private String citizenMiddleName;
     private String citizenBirthDate;
     private String citizenNumberOfPassport;
-    private String citizenGender;
+    private Gender citizenGender;
     private String citizenAddress;
+
     private String dateOfMarriage;
     private String newLastName;
     private String anotherPersonLastName;
     private String anotherPersonFirstName;
     private String anotherPersonMiddleName;
-    private String birth_of_anotoherPerson;
-    private String anotherPersonPassport;
-    private String birth_place;
-    private String birth_mother;
-    private String birth_father;
-    private String birth_grandpa;
-    private String birth_grandma;
-    private String death_dateOfDeath;
-    private String death_placeOfDeath;
 
+    @JsonProperty("birth_of_anotoherPerson")
+    private String birthOfAnotherPerson;
+
+    private String anotherPersonPassport;
+
+    @JsonProperty("birth_place")
+    private String birthPlace;
+
+    @JsonProperty("birth_mother")
+    private String birthMother;
+
+    @JsonProperty("birth_father")
+    private String birthFather;
+
+    @JsonProperty("birth_grandpa")
+    private String birthGrandpa;
+
+    @JsonProperty("birth_grandma")
+    private String birthGrandma;
+
+    @JsonProperty("death_dateOfDeath")
+    private String deathDateOfDeath;
+
+    @JsonProperty("death_placeOfDeath")
+    private String deathPlaceOfDeath;
 }

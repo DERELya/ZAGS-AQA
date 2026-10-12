@@ -1,13 +1,13 @@
 package api;
 
 import io.qameta.allure.*;
-import model.dto.AdminRequestDto;
-import model.specs.RequestSpecs;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import utils.TestDataFactory;
+import utils.ZagsApiSteps;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("ZAGS")
 @Feature("API — регистрация администратора")
@@ -22,34 +22,24 @@ public class SendAdminRequestTest {
     )
     void sendAdminRequest() {
 
-        AdminRequestDto request = createAdminRequest();
+        Response response = ZagsApiSteps.sendAdminRequest(
+                TestDataFactory.adminRequest()
+        );
 
-        given()
-                .spec(RequestSpecs.baseRequestSpec())
-                .body(request)
+        Object staffId = response.jsonPath().get("data.staffid");
+        Object requestId = response.jsonPath().get("requestId");
 
-                .when()
-                .post("/sendAdminRequest")
+        assertAll(
+                "Проверка ответа регистрации администратора",
 
-                .then()
-                .statusCode(200)
-                .body("data.staffid", notNullValue())
-                .body("data.staffid", greaterThan(0))
-                .body("data.staffid", instanceOf(Number.class))
-                .body("requestId", notNullValue());
+                () -> assertNotNull(requestId, "requestId отсутствует"),
+
+                () -> assertTrue(
+                        staffId instanceof Number
+                                && ((Number) staffId).longValue() > 0,
+                        "Некорректный data.staffid"
+                )
+        );
     }
 
-    @Step("Подготавливаем данные администратора")
-    private AdminRequestDto createAdminRequest() {
-        AdminRequestDto request = new AdminRequestDto();
-
-        request.setPersonalLastName("Сергеев");
-        request.setPersonalFirstName("Олег");
-        request.setPersonalMiddleName("Олегович");
-        request.setPersonalPhoneNumber("37526785632");
-        request.setPersonalNumberOfPassport("12378312");
-        request.setDateOfBirth("2002-11-12");
-
-        return request;
-    }
 }

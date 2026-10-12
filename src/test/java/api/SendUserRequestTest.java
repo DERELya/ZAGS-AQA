@@ -1,18 +1,15 @@
 package api;
 
+import api.dto.AppForDeathDto;
+import api.dto.ApplicationRequestDto;
+import api.dto.ApplicationResponseDto;
 import io.qameta.allure.*;
-import io.restassured.common.mapper.TypeRef;
-import model.dto.AppForDeathDto;
-import model.dto.ApplicationRequestDto;
-import model.dto.ApplicationResponseDto;
-import model.specs.RequestSpecs;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import utils.TestDataFactory;
+import utils.ZagsApiSteps;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("ZAGS")
@@ -26,18 +23,10 @@ public class SendUserRequestTest {
     @Description("Проверяет создание заявки на регистрацию смерти через POST /sendUserRequest.")
     void sendUserRequest() {
 
-        ApplicationRequestDto application = createDeathApplication();
         ApplicationResponseDto<AppForDeathDto> response =
-                given()
-                        .spec(RequestSpecs.baseRequestSpec())
-                        .body(application)
-                        .when()
-                        .post("/sendUserRequest")
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {
-                        });
+                ZagsApiSteps.sendDeathApplication(
+                        TestDataFactory.deathApplication()
+                );
 
         assertNotNull(response.getData(), "Данные заявки отсутствуют");
 
@@ -52,58 +41,69 @@ public class SendUserRequestTest {
                 ),
 
                 () -> assertNotNull(
-                        data.getDeathcertificateid(),
+                        data.getDeathCertificateId(),
                         "deathcertificateid отсутствует"
                 ),
 
                 () -> assertNotNull(
-                        data.getApplicantid(),
+                        data.getApplicantId(),
                         "applicantid отсутствует"
                 ),
 
                 () -> assertNotNull(
-                        data.getCitizenid(),
+                        data.getCitizenId(),
                         "citizenid отсутствует"
                 ),
 
                 () -> assertNotNull(
-                        data.getApplicationid(),
+                        data.getApplicationId(),
                         "applicationid отсутствует"
                 ),
-                () -> assertTrue(data.getApplicantid() > 0, "Некорректный ApplicantId"),
-                () -> assertTrue(data.getCitizenid() > 0, "Некорректный CitizenId"),
-                () -> assertTrue(data.getDeathcertificateid() > 0, "Некорректный DeathCertificateId"),
-                () -> assertTrue(data.getApplicantid() > 0, "Некорректный ApplicantId")
+                () -> assertTrue(data.getApplicationId() > 0, "Некорректный Applicationid"),
+                () -> assertTrue(data.getCitizenId() > 0, "Некорректный CitizenId"),
+                () -> assertTrue(data.getDeathCertificateId() > 0, "Некорректный DeathCertificateId"),
+                () -> assertTrue(data.getApplicantId() > 0, "Некорректный ApplicantId")
+        );
+
+        Response responseApp = ZagsApiSteps.getApplicationStatus(data.getApplicationId());
+        assertAll(
+                () -> assertEquals("under consideration", responseApp.jsonPath().get("data.statusofapplication"), "Статус заявки не совпадает"),
+                () -> assertEquals("Получение свидетельства о смерти", responseApp.jsonPath().get("data.kindofapplication"), "Тип заявки не совпадает")
         );
     }
 
-    @Step("Подготавливаем данные заявки на регистрацию смерти")
-    private ApplicationRequestDto createDeathApplication() {
-        ApplicationRequestDto application = new ApplicationRequestDto();
+    @Test
+    @DisplayName("Отклонение заявки без фамилии заявителя")
+    @Story("Валидация обязательных полей")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Проверяем, что API отклоняет заявку, в которой personalLastName равен null.")
+    void rejectApplicationWithoutApplicantLastName() {
+        ApplicationRequestDto request =
+                TestDataFactory.deathApplication();
 
-        application.setMode("death");
-        application.setPersonalLastName("Сергеев");
-        application.setPersonalFirstName("Олег");
-        application.setPersonalMiddleName("Олегович");
-        application.setPersonalPhoneNumber("37526785632");
-        application.setPersonalNumberOfPassport("12378612");
-        application.setPersonalAddress("Брест");
+        request.setPersonalLastName(null);
 
-        application.setCitizenLastName("Сергеев");
-        application.setCitizenFirstName("Олег");
-        application.setCitizenMiddleName("Олегович");
-        application.setCitizenGender("Муж");
-        application.setCitizenBirthDate("2005-11-12");
-        application.setCitizenAddress("Брест");
-        application.setCitizenNumberOfPassport("32785631");
+        Response response = ZagsApiSteps.sendUserRequest(request);
 
-        application.setDeath_placeOfDeath("Брест");
-        application.setDeath_dateOfDeath(
-                LocalDate.now()
-                        .minusDays(10)
-                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        assertEquals(400, response.statusCode(),
+                "Ожидался HTTP статус 400 при отсутствии personalLastName. Ответ: " + response.asPrettyString()
         );
+    }
 
-        return application;
+    @Test
+    @DisplayName("Отклонение заявки с неизвестным типом услуги")
+    @Story("Валидация поля mode")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Проверяем, что API отклоняет заявку с недопустимым значением mode.")
+    void rejectApplicationWithInvalidMode() {
+        ApplicationRequestDto request =
+                TestDataFactory.deathApplication();
+
+        request.setMode("qwerty");
+
+        Response response = ZagsApiSteps.sendUserRequest(request);
+
+        assertEquals(400, response.statusCode(), "Ожидался HTTP статус 400 для неизвестного mode. Ответ: " + response.asPrettyString()
+        );
     }
 }

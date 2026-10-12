@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.URI;
 import java.time.Duration;
 
 public class DriverManager {
@@ -26,9 +27,9 @@ public class DriverManager {
             waitThreadLocal.set(new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS)));
             String username = TestConfig.getUsername();
             String password = TestConfig.getPassword();
-
+            String host = URI.create(TestConfig.getBaseUrl()).getHost();
             ((HasAuthentication) driver).register(
-                    uri -> "regoffice.senla.eu".equalsIgnoreCase(uri.getHost()),
+                    uri -> host.equalsIgnoreCase(uri.getHost()),
                     UsernameAndPassword.of(username, password));
         }
         return driverThreadLocal.get();

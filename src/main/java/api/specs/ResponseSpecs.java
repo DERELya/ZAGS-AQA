@@ -1,10 +1,13 @@
-package model.specs;
+package api.specs;
 
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.ResponseSpecification;
 
-public class ResponseSpecs {
+public final class ResponseSpecs {
+
+    private ResponseSpecs() {
+    }
 
     public static ResponseSpecification successResponse() {
         return new ResponseSpecBuilder()
