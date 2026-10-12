@@ -89,7 +89,7 @@ public class RequestProcessTest {
                 ),
 
                 () -> assertNotNull(
-                        TypeOfApplication.DEATH.getValue(),
+                        application.getKindOfApplication(),
                         "kindofapplication отсутствует"
                 ),
 
