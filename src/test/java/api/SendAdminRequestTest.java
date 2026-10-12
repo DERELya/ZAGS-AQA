@@ -1,11 +1,12 @@
 package api;
 
+import api.dto.AdminResponseDto;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
-import utils.ZagsApiSteps;
+import api.steps.ZagsApiSteps;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,22 +23,29 @@ public class SendAdminRequestTest {
     )
     void sendAdminRequest() {
 
-        Response response = ZagsApiSteps.sendAdminRequest(
+        AdminResponseDto response = ZagsApiSteps.sendAdminRequest(
                 TestDataFactory.adminRequest()
         );
 
-        Object staffId = response.jsonPath().get("data.staffid");
-        Object requestId = response.jsonPath().get("requestId");
+        assertNotNull(response, "Ответ сервера отсутствует");
+        assertNotNull(response.getData(), "Данные администратора отсутствуют");
 
         assertAll(
                 "Проверка ответа регистрации администратора",
 
-                () -> assertNotNull(requestId, "requestId отсутствует"),
+                () -> assertNotNull(
+                        response.getRequestId(),
+                        "requestId отсутствует"
+                ),
+
+                () -> assertNotNull(
+                        response.getData().getStaffId(),
+                        "staffId отсутствует"
+                ),
 
                 () -> assertTrue(
-                        staffId instanceof Number
-                                && ((Number) staffId).longValue() > 0,
-                        "Некорректный data.staffid"
+                        response.getData().getStaffId() > 0,
+                        "Некорректный staffId"
                 )
         );
     }

@@ -1,14 +1,16 @@
 package api;
 
 import api.dto.AppForDeathDto;
+import api.dto.ApplicationDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
+import model.data.TypeOfApplication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
-import utils.ZagsApiSteps;
+import api.steps.ZagsApiSteps;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,10 +67,28 @@ public class SendUserRequestTest {
                 () -> assertTrue(data.getApplicantId() > 0, "Некорректный ApplicantId")
         );
 
-        Response responseApp = ZagsApiSteps.getApplicationStatus(data.getApplicationId());
+        ApplicationResponseDto<ApplicationDto> responseApp =
+                ZagsApiSteps.getApplicationStatus(data.getApplicationId());
+
+        assertNotNull(responseApp, "Ответ получения заявки отсутствует");
+        assertNotNull(responseApp.getData(), "Заявка не найдена");
+
+        ApplicationDto savedApplication = responseApp.getData();
+
         assertAll(
-                () -> assertEquals("under consideration", responseApp.jsonPath().get("data.statusofapplication"), "Статус заявки не совпадает"),
-                () -> assertEquals("Получение свидетельства о смерти", responseApp.jsonPath().get("data.kindofapplication"), "Тип заявки не совпадает")
+                "Проверка сохранённой заявки",
+
+                () -> assertEquals(
+                        "under consideration",
+                        savedApplication.getStatusOfApplication(),
+                        "Начальный статус заявки не совпадает"
+                ),
+
+                () -> assertEquals(
+                        TypeOfApplication.DEATH.getValue(),
+                        savedApplication.getKindOfApplication(),
+                        "Тип заявки не совпадает"
+                )
         );
     }
 

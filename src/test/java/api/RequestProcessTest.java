@@ -7,11 +7,15 @@ import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.Response;
+import model.data.StatusOfApplication;
+import model.data.TypeOfApplication;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
-import utils.ZagsApiSteps;
+import api.steps.ZagsApiSteps;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RequestProcessTest {
 
     private static long staffId;
-    private static long applId;
+    private  long applId;
 
     @Test
     @DisplayName("Позитивный сценарий одобрения заявки")
@@ -31,24 +35,25 @@ public class RequestProcessTest {
     void approveApplication() {
 
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
-        body.setAction("approved");
+        body.setAction(StatusOfApplication.APPROVED.getValue());
         body.setStaffid(staffId);
         body.setApplId(applId);
+        Response rawResponse = ZagsApiSteps.processApplication(
+                RequestSpecs.baseRequestSpec(),
+                body
+        );
+        rawResponse.then()
+                .spec(ResponseSpecs.successResponse());
+
         ApplicationResponseDto<ApplicationDto> response =
-                given()
-                        .spec(RequestSpecs.baseRequestSpec())
-                        .body(body)
-                        .when()
-                        .post("/requestProcess")
-                        .then()
-                        .spec(ResponseSpecs.successResponse())
-                        .extract()
-                        .as(new TypeRef<ApplicationResponseDto<ApplicationDto>>() {
-                        });
+                rawResponse.as(
+                        new TypeRef<ApplicationResponseDto<ApplicationDto>>() {}
+                );
 
         ApplicationDto application = response.getData();
 
         assertNotNull(response.getData(), "заявка пустая");
+
         assertAll(
                 "Проверка одобренной заявки",
 
@@ -64,7 +69,7 @@ public class RequestProcessTest {
 
                 () -> assertEquals(
                         applId,
-                        application.getApplicationId().longValue(),
+                        application.getApplicationId(),
                         "Возвращён ID другой заявки"
                 ),
 
@@ -84,19 +89,49 @@ public class RequestProcessTest {
                 ),
 
                 () -> assertNotNull(
-                        application.getKindOfApplication(),
+                        TypeOfApplication.DEATH.getValue(),
                         "kindofapplication отсутствует"
                 ),
 
                 () -> assertEquals(
-                        "approved",
+                        StatusOfApplication.APPROVED.getValue(),
                         application.getStatusOfApplication(),
-                        "Статус заявки не approved"
+                        "Статус заявки в ответе не approved"
                 ),
 
                 () -> assertNotNull(
                         application.getChannel(),
                         "channel отсутствует"
+                )
+        );
+
+        ApplicationResponseDto<ApplicationDto> persistedResponse =
+                ZagsApiSteps.getApplicationStatus(applId);
+
+        assertNotNull(
+                persistedResponse,
+                "Ответ GET /getApplStatus отсутствует"
+        );
+        assertNotNull(
+                persistedResponse.getData(),
+                "Заявка не найдена после одобрения"
+        );
+
+        ApplicationDto approvedApplication = persistedResponse.getData();
+
+        assertAll(
+                "Проверка одобренной заявки через GET /getApplStatus",
+
+                () -> assertEquals(
+                        StatusOfApplication.APPROVED.getValue(),
+                        approvedApplication.getStatusOfApplication(),
+                        "Статус approved не сохранился в системе"
+                ),
+
+                () -> assertEquals(
+                        TypeOfApplication.DEATH.getValue(),
+                        approvedApplication.getKindOfApplication(),
+                        "Тип сохранённой заявки не совпадает"
                 )
         );
     }
@@ -106,22 +141,41 @@ public class RequestProcessTest {
     @Story("Валидация поля action")
     @Severity(SeverityLevel.NORMAL)
     @Description("Проверяем, что API отклоняет заявку, в которой action недопустимый.")
-    void administrationApplicationWithoutInvalidAction() {
+    void administrationApplicationWithInvalidAction() {
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
         body.setAction("qweyui");
         body.setStaffid(staffId);
         body.setApplId(applId);
-        given()
-                .spec(RequestSpecs.baseRequestSpec())
-                .body(body)
-                .when()
-                .post("/requestProcess")
-                .then()
-                .log()
-                .ifValidationFails()
-                .statusCode(400);
+        Response response = ZagsApiSteps.processApplication(
+                RequestSpecs.baseRequestSpec(),
+                body
+        );
 
+        assertEquals(
+                400,
+                response.statusCode(),
+                "Ожидался HTTP 400. Ответ: " + response.asPrettyString()
+        );
 
+        String errorBody = response.asString().toLowerCase(java.util.Locale.ROOT);
+
+        assertFalse(
+                errorBody.isBlank(),
+                "Тело ошибки пустое"
+        );
+
+        assertTrue(
+                errorBody.contains("action")
+                        || errorBody.contains("invalid")
+                        || errorBody.contains("недопуст")
+                        || errorBody.contains("действ")
+                        || errorBody.contains("неправильн")
+                        || errorBody.contains("error")
+                        || errorBody.contains("fail")
+                        || errorBody.contains("ошиб"),
+                "Ответ не содержит сообщение с ошибкой о валидации action: "
+                        + response.asPrettyString()
+        );
     }
 
     @Test
@@ -130,19 +184,38 @@ public class RequestProcessTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Проверяем, что API отклоняет заявку, без авторизации")
     void administrationApplicationWithoutAuth() {
+
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
-        body.setAction("approved");
+        body.setAction(StatusOfApplication.APPROVED.getValue());
         body.setStaffid(staffId);
         body.setApplId(applId);
-        given()
-                .spec(RequestSpecs.unauthenticatedRequestSpec())
-                .body(body)
-                .when()
-                .post("/requestProcess")
-                .then()
-                .log()
-                .ifValidationFails()
-                .statusCode(401);
+
+        Response response = ZagsApiSteps.processApplication(
+                RequestSpecs.unauthenticatedRequestSpec(),
+                body
+        );
+
+        assertEquals(
+                401,
+                response.statusCode(),
+                "Ожидался HTTP 401. Ответ: " + response.asPrettyString()
+        );
+
+        String errorBody = response.asString()
+                .toLowerCase(java.util.Locale.ROOT);
+
+        String authChallenge = response.getHeader("WWW-Authenticate");
+
+        assertTrue(
+                authChallenge != null
+                        || errorBody.contains("unauthorized")
+                        || errorBody.contains("authentication")
+                        || errorBody.contains("authorization")
+                        || errorBody.contains("авторизац")
+                        || errorBody.contains("аутентификац"),
+                "Ответ не содержит сообщение об отказе в авторизации: "
+                        + response.asPrettyString()
+        );
     }
 
     @BeforeAll
@@ -150,11 +223,13 @@ public class RequestProcessTest {
         staffId = ZagsApiSteps.createAdministrator(
                 TestDataFactory.adminRequest()
         );
+    }
 
+    @BeforeEach
+    public void createApplicationForTest() {
         applId = ZagsApiSteps.createDeathApplication(
                 TestDataFactory.deathApplication()
         );
-
     }
 
 }

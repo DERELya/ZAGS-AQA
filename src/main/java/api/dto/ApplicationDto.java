@@ -1,21 +1,23 @@
 package api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicationDto {
     @JsonProperty("applicationid")
-    private Integer applicationId;
+    private Long applicationId;
 
     @JsonProperty("citizenid")
-    private Integer citizenId;
+    private Long citizenId;
 
     @JsonProperty("applicantid")
-    private Integer applicantId;
+    private Long applicantId;
 
     @JsonProperty("staffid")
-    private Integer staffId;
+    private Long staffId;
 
     @JsonProperty("dateofapplication")
     private String dateOfApplication;

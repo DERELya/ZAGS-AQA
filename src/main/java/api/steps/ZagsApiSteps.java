@@ -1,21 +1,21 @@
-package utils;
+package api.steps;
 
-import api.dto.AdminRequestDto;
-import api.dto.AppForDeathDto;
-import api.dto.ApplicationRequestDto;
-import api.dto.ApplicationResponseDto;
+import api.dto.*;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.qameta.allure.Step;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
 
 public final class ZagsApiSteps {
+    private ZagsApiSteps() {
+    }
 
     @Step("Отправляем запрос на регистрацию администратора")
-    public static Response sendAdminRequest(AdminRequestDto requestDto) {
+    public static AdminResponseDto sendAdminRequest(AdminRequestDto requestDto) {
         return given()
                 .spec(RequestSpecs.baseRequestSpec())
                 .body(requestDto)
@@ -24,22 +24,21 @@ public final class ZagsApiSteps {
                 .then()
                 .spec(ResponseSpecs.successResponse())
                 .extract()
-                .response();
+                .as(AdminResponseDto.class);
     }
 
     @Step("Создаём администратора и получаем его ID")
     public static long createAdministrator(AdminRequestDto requestDto) {
-        Object value = sendAdminRequest(requestDto)
-                .jsonPath()
-                .get("data.staffid");
-
-        if (!(value instanceof Number staffId) || staffId.longValue() <= 0) {
+        AdminResponseDto response = sendAdminRequest(requestDto);
+        if (response.getData() == null
+                || response.getData().getStaffId() == null
+                || response.getData().getStaffId() <= 0) {
             throw new IllegalStateException(
-                    "API вернул некорректный data.staffid"
+                    "API не вернул корректный data.staffid"
             );
         }
 
-        return staffId.longValue();
+        return response.getData().getStaffId();
     }
 
     @Step("Отправляем заявку на регистрацию смерти")
@@ -72,8 +71,8 @@ public final class ZagsApiSteps {
         return response.getData().getApplicationId();
     }
 
-    @Step("Получаем заявку по ID")
-    public static Response getApplicationStatus(Long applicationId) {
+    @Step("Получаем статус заявки по ID {applicationId}")
+    public static ApplicationResponseDto<ApplicationDto> getApplicationStatus(Long applicationId) {
         return given()
                 .spec(RequestSpecs.baseRequestSpec())
                 .pathParam("applicationId", applicationId)
@@ -82,7 +81,7 @@ public final class ZagsApiSteps {
                 .then()
                 .spec(ResponseSpecs.successResponse())
                 .extract()
-                .response();
+                .as(new TypeRef<ApplicationResponseDto<ApplicationDto>>() {});
     }
 
     @Step("Отправляем заявку и получаем ответ API без предварительной проверки статуса")
@@ -95,5 +94,34 @@ public final class ZagsApiSteps {
                 .then()
                 .extract()
                 .response();
+    }
+
+    @Step("Отправляем запрос на обработку заявки")
+    public static Response processApplication(
+            RequestSpecification spec,
+            AdministrationApplicantionDto body
+    ) {
+        return given()
+                .spec(spec)
+                .body(body)
+                .when()
+                .post("/requestProcess")
+                .then()
+                .extract()
+                .response();
+    }
+
+    @Step("Получаем заявки: страница {page}, лимит {limit}")
+    public static ApplicationsResponseDto getApplications(int page,int limit) {
+        return given()
+                .spec(RequestSpecs.baseRequestSpec())
+                .queryParam("page", page)
+                .queryParam("limit", limit)
+                .when()
+                .get("/getApplications")
+                .then()
+                .spec(ResponseSpecs.successResponse())
+                .extract()
+                .as(ApplicationsResponseDto.class);
     }
 }
