@@ -1,10 +1,10 @@
 package pages.admin;
 
+import io.qameta.allure.Step;
 import model.AdminData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
-import pages.user.ChooseServicePage;
 
 public class LoginAdminPage extends BasePage {
     @FindBy(xpath = "//input[@id=//label[text()=\"Фамилия\"]/@for]")
@@ -35,13 +35,16 @@ public class LoginAdminPage extends BasePage {
         super();
     }
 
+    @Step("Заполнение данных администратора: {admin.lastName}, {admin.firstName}, {admin.middleName}")
     public LoginAdminPage fillForm(AdminData admin) {
+
         clearAndSendKeys(lastNameInput, admin.lastName());
         clearAndSendKeys(firstNameInput, admin.firstName());
         clearAndSendKeys(middleNameInput, admin.middleName());
         clearAndSendKeys(phoneNumberInput, admin.phoneNumber());
         clearAndSendKeys(passportInput, admin.passport());
         clearAndSendKeys(dateOfBirthInput, admin.dateOfBirth());
+
         return this;
     }
 
@@ -75,7 +78,7 @@ public class LoginAdminPage extends BasePage {
         return this;
     }
 
-
+    @Step("Нажатие кнопки далее")
     public AdministrationApplications clickNextButton() {
         click(nextButton);
         return new AdministrationApplications();

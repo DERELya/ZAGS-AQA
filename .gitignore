@@ -7,13 +7,18 @@ target/
 ### IntelliJ IDEA ###
 .idea/
 out/
-src/main/resources/*
-!src/main/resources/application.properties.example
-.allure/
 *.iws
 *.iml
 *.ipr
 
+### Logs ###
+logs/
+*.log
+*.log.gz
+
+### Allure ###
+allure-results/
+.allure/
 ### Eclipse ###
 .apt_generated
 .classpath

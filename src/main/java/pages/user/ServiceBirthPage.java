@@ -1,5 +1,6 @@
 package pages.user;
 
+import io.qameta.allure.Step;
 import model.BirthData;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,12 +32,15 @@ public class ServiceBirthPage extends BasePage {
 
     public ServiceBirthPage() {super();}
 
+    @Step("Заполнение данных услуги регистрация рождения: {birthData.placeOfBirth}, {birthData.mother}, {birthData.dad} ")
     public ServiceBirthPage fillForm(BirthData birthData) {
+
         clearAndSendKeys(placeOfBirthInput, birthData.placeOfBirth());
         clearAndSendKeys(motherInput, birthData.mother());
         clearAndSendKeys(dadInput, birthData.dad());
         clearAndSendKeys(grandmotherInput, birthData.grandmother());
         clearAndSendKeys(granddadInput, birthData.granddad());
+
         return this;
     }
     public ServiceBirthPage fillPlaceOfBirth(String placeOfBirth) {
@@ -60,8 +64,9 @@ public class ServiceBirthPage extends BasePage {
         clearAndSendKeys(granddadInput, granddad);
         return this;
     }
-
+    @Step("Нажатие кнопки завершить")
     public StatusPage clickCompleteButton() {
+
         click(completeButton);
         return new StatusPage();
     }

@@ -1,7 +1,8 @@
 package model;
 
-public record DeathData (
+public record DeathData(
         String dateOfDeath,
         String placeOfDeath
-){}
+) {
+}
 

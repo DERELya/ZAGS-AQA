@@ -1,14 +1,20 @@
-import driver.DriverManager;
+package ui;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import utils.AllureFailureExtension;
+import utils.DriverManager;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.TestConfig;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@ExtendWith(AllureFailureExtension.class)
 public abstract class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait wait;
@@ -40,7 +46,7 @@ public abstract class BaseTest {
 
         driver = DriverManager.getDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get("https://regoffice.senla.eu/");
+        driver.get(TestConfig.getBaseUrl());
     }
 
     @AfterEach
