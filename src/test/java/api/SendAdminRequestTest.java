@@ -1,12 +1,11 @@
 package api;
 
 import api.dto.AdminResponseDto;
+import api.steps.ZagsApiSteps;
 import io.qameta.allure.*;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
-import api.steps.ZagsApiSteps;
 
 import static org.junit.jupiter.api.Assertions.*;
 
