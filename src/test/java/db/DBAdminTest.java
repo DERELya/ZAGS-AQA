@@ -3,11 +3,15 @@ package db;
 import db.model.Admin;
 import db.repository.AdminRepository;
 import db.utils.TestDBDataFactory;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Epic("ZAGS")
+@Feature("DB — Администратор")
 public class DBAdminTest {
     private Integer createdAdminId;
 
@@ -15,6 +19,10 @@ public class DBAdminTest {
     private final AdminRepository adminRepository = new AdminRepository();
 
     @Test
+    @DisplayName("Создание администратора")
+    @Story("Тестирование базы данных")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Проверяем, что база данных корректно сохраняет администратора")
     void createAdminAndVerifyDataInDatabase() {
         Admin expected = TestDBDataFactory.createAdmin();
 
@@ -34,6 +42,7 @@ public class DBAdminTest {
     }
 
     @AfterEach
+    @Step("Удаление администратора после теста")
     void cleanUp() {
         if (createdAdminId != null) {
             adminRepository.deleteById(createdAdminId);

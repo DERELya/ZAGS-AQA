@@ -5,13 +5,13 @@ import db.model.DeathCertificate;
 import db.repository.CitizenRepository;
 import db.repository.DeathCertificateRepository;
 import db.utils.TestDBDataFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import io.qameta.allure.*;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Epic("ZAGS")
+@Feature("DB — Свидетельство о смерти")
 public class DBDeathCertificateTest {
 
     private Integer createdDeathCertificateId;
@@ -26,6 +26,10 @@ public class DBDeathCertificateTest {
 
 
     @Test
+    @DisplayName("Создание свидетельства о смерти")
+    @Story("Тестирование базы данных")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Проверяем, что база данных корректно сохраняет свидетельство о смерти")
     void createDeathCertificateAndVerifyDataInDatabase() {
         DeathCertificate expected = TestDBDataFactory.createDeathCertificate(createdCitizenId);
 
@@ -33,7 +37,7 @@ public class DBDeathCertificateTest {
 
         DeathCertificate actual = deathCertificateRepository.findById(createdDeathCertificateId);
 
-        assertNotNull(actual, "Заявитель должен существовать в БД");
+        assertNotNull(actual, "Свидетельство о смерти должно существовать в БД после сохранения");
         assertAll(
                 () -> assertEquals(expected.getCitizenId(), actual.getCitizenId()),
                 () -> assertEquals(expected.getDeathcertificateid(), actual.getDeathcertificateid()),
@@ -43,13 +47,15 @@ public class DBDeathCertificateTest {
     }
 
 
-
     @BeforeAll
+    @Step("Создание гражданина в бд для теста")
     static void createCitizen() {
-        Citizen citizen=TestDBDataFactory.createCitizen();
+        Citizen citizen = TestDBDataFactory.createCitizen();
         createdCitizenId = citizenRepository.save(citizen);
     }
+
     @AfterAll
+    @Step("Удаление гражданина после теста")
     static void cleanUpCitizen() {
         if (createdCitizenId != null) {
             citizenRepository.deleteById(createdCitizenId);
@@ -57,6 +63,7 @@ public class DBDeathCertificateTest {
     }
 
     @AfterEach
+    @Step("Удаление свидетельства о смерти после теста")
     void cleanUp() {
         if (createdDeathCertificateId != null) {
             deathCertificateRepository.deleteById(createdDeathCertificateId);

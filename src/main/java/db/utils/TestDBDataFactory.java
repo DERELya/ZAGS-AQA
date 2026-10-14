@@ -1,9 +1,7 @@
 package db.utils;
 
-import db.model.Admin;
-import db.model.Applicant;
-import db.model.Citizen;
-import db.model.DeathCertificate;
+import db.model.*;
+import io.qameta.allure.Step;
 import model.data.Gender;
 import utils.HelperForDate;
 
@@ -33,9 +31,8 @@ public class TestDBDataFactory {
                             .nextInt(PASSPORT_MIN, PASSPORT_MAX + 1)
             );
 
+    @Step("Создание тестовых данных для заявителя")
     public static Applicant createApplicant() {
-
-
         Applicant applicant = new Applicant();
 
         applicant.setSurname("Сергеев");
@@ -48,8 +45,8 @@ public class TestDBDataFactory {
         return applicant;
     }
 
+    @Step("Создание тестовых данных для гражданина")
     public static Citizen createCitizen() {
-
 
         Citizen citizen = new Citizen();
 
@@ -64,6 +61,7 @@ public class TestDBDataFactory {
         return citizen;
     }
 
+    @Step("Создание тестовых данных для свидетельства о смерти")
     public static DeathCertificate createDeathCertificate(Integer citizenId) {
 
         DeathCertificate deathCertificate = new DeathCertificate();
@@ -75,6 +73,7 @@ public class TestDBDataFactory {
         return deathCertificate;
     }
 
+    @Step("Создание тестовых данных для администратора")
     public static Admin createAdmin() {
 
         Admin admin = new Admin();
@@ -84,9 +83,24 @@ public class TestDBDataFactory {
         admin.setMiddleName("Сергеевич");
         admin.setPhoneNumber(nextPhone());
         admin.setPassportNumber(nextPassport());
-        admin.setDateofbirth(LocalDate.of(2000,3,19));
+        admin.setDateofbirth(LocalDate.of(2000, 3, 19));
 
         return admin;
+    }
+    @Step("Создание тестовых данных для свидетельства о рождении")
+    public static BirthCertificate createBirthCertificate(
+            Integer citizenId) {
+
+        BirthCertificate certificate = new BirthCertificate();
+
+        certificate.setCitizenId(citizenId);
+        certificate.setPlaceOfBirth("Брест");
+        certificate.setMother("Ольга");
+        certificate.setFather("Стас");
+        certificate.setGrandma("Татьяна");
+        certificate.setGrandpa("Виктор");
+
+        return certificate;
     }
 
     private static String nextPhone() {
