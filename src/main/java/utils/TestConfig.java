@@ -16,6 +16,26 @@ public class TestConfig {
         return getRequiredValue("base.url", "BASE_URL");
     }
 
+    public static String getDbHost() {
+        return getRequiredValue("db.host", "DB_HOST");
+    }
+
+    public static String getDbPort() {
+        return getRequiredValue("db.port", "DB_PORT");
+    }
+    public static String getDbName() {
+        return getRequiredValue("db.name", "DB_NAME");
+    }
+
+    public static String getDbUsername() {
+        return getRequiredValue("db.username", "DB_USERNAME");
+    }
+
+    public static String getDbPassword() {
+        return getRequiredValue("db.password", "DB_PASSWORD");
+    }
+
+
     private static String getRequiredValue(String propertyName, String envName) {
         String value = System.getProperty(propertyName);
         if (value == null || value.isBlank()) {

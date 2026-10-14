@@ -6,6 +6,7 @@ import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
+import model.data.StatusOfApplication;
 import model.data.TypeOfApplication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ public class SendUserRequestTest {
                 "Проверка сохранённой заявки",
 
                 () -> assertEquals(
-                        "under consideration",
+                        StatusOfApplication.UNDER_CONSIDERATION.getValue(),
                         savedApplication.getStatusOfApplication(),
                         "Начальный статус заявки не совпадает"
                 ),
