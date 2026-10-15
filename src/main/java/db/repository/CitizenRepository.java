@@ -3,31 +3,24 @@ package db.repository;
 import db.model.Citizen;
 import io.qameta.allure.Step;
 
-public class CitizenRepository extends BaseRepository {
+public class CitizenRepository extends BaseRepository<Citizen,Integer> {
+
+    public CitizenRepository() {
+        super(Citizen.class,Citizen::getCitizenid);
+    }
     @Step("Сохранение в БД заявителя с данными: фамилия {citizen.surname}, имя {citizen.name},отчество {citizen.middleName}")
+    @Override
     public Integer save(Citizen citizen) {
-        return executeInTransaction(session -> {
-            session.persist(citizen);
-            return citizen.getCitizenid();
-        });
+        return super.save(citizen);
     }
     @Step("Получение из БД гражданина с id: {citizenid}")
+    @Override
     public Citizen findById(Integer citizenId) {
-        return executeWithSession(
-                session -> session.find(Citizen.class, citizenId)
-        );
+       return super.findById(citizenId);
     }
     @Step("Удаление гражданина с id: {citizenId}")
+    @Override
     public void deleteById(Integer citizenId) {
-        executeInTransaction(session -> {
-            Citizen citizen =
-                    session.find(Citizen.class, citizenId);
-
-            if (citizen != null) {
-                session.remove(citizen);
-            }
-
-            return null;
-        });
+        super.deleteById(citizenId);
     }
 }

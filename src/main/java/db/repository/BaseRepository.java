@@ -6,12 +6,125 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.Objects;
 import java.util.function.Function;
 
-public class BaseRepository {
+public class BaseRepository<T, ID> {
 
-    private static final Logger logger =
-            LogManager.getLogger(BaseRepository.class);
+    private final Class<T> entityClass;
+    private final Function<T, ID> idExtractor;
+
+    private final Logger logger =
+            LogManager.getLogger(getClass());
+
+    protected BaseRepository(
+            Class<T> entityClass,
+            Function<T, ID> idExtractor) {
+
+        this.entityClass = entityClass;
+        this.idExtractor = idExtractor;
+    }
+    public ID save(T entity) {
+        Objects.requireNonNull(entity, "Entity не должна быть null");
+
+        return executeInTransaction(
+                "Сохранение " + entityClass.getSimpleName(),
+                session -> {
+                    session.persist(entity);
+                    session.flush();
+
+                    return idExtractor.apply(entity);
+                }
+        );
+    }
+    public T findById(ID id) {
+        return executeWithSession(
+                "Поиск " + entityClass.getCanonicalName() + ", ID=" + id,
+                session -> session.find(entityClass, id)
+        );
+    }
+
+    public void deleteById(ID id) {
+        executeInTransaction(
+                "Удаление " + entityClass.getSimpleName() + ", ID=" + id,
+                session -> {
+                    T entity = session.find(entityClass, id);
+
+                    if (entity != null) {
+                        session.remove(entity);
+                    }
+
+                    return null;
+                }
+        );
+    }
+
+    protected final <R> R executeInTransaction(
+            String operationName,
+            Function<Session, R> operation) {
+
+        try (Session session =
+                     HibernateUtil.getSessionFactory().openSession()) {
+
+            Transaction transaction = null;
+
+            try {
+                transaction = session.beginTransaction();
+
+                R result = operation.apply(session);
+
+                transaction.commit();
+
+                logger.info(
+                        "{} выполнено успешно",
+                        operationName
+                );
+
+                return result;
+
+            } catch (RuntimeException e) {
+                rollback(transaction, e);
+
+                logger.error(
+                        "{}: ошибка ",
+                        operationName,
+                        e
+                );
+
+                throw e;
+            }
+        }
+    }
+
+    protected final <R> R executeWithSession(
+            String operationName,
+            Function<Session, R> operation) {
+
+        try (Session session =
+                     HibernateUtil.getSessionFactory().openSession()) {
+
+            try {
+                R result = operation.apply(session);
+
+                logger.debug(
+                        "{} выполнено ; запись найдена: {}",
+                        operationName,
+                        result != null
+                );
+
+                return result;
+
+            } catch (RuntimeException e) {
+                logger.error(
+                        "{}: ошибка при чтении",
+                        operationName,
+                        e
+                );
+
+                throw e;
+            }
+        }
+    }
 
     private void rollback(
             Transaction transaction,
@@ -23,58 +136,10 @@ public class BaseRepository {
 
         try {
             transaction.rollback();
-            logger.info("Транзакция отменена через rollback");
+            logger.debug("Транзакция отменена после ошибки");
+
         } catch (RuntimeException rollbackException) {
             originalException.addSuppressed(rollbackException);
-        }
-    }
-
-    protected final <T> T executeInTransaction(
-            Function<Session, T> operation) {
-
-        try (Session session =
-                     HibernateUtil.getSessionFactory().openSession()) {
-
-            Transaction transaction = session.beginTransaction();
-            logger.info("Начало транзакции Hibernate");
-            try {
-                T result = operation.apply(session);
-
-                transaction.commit();
-                logger.info("Транзакция Hibernate успешно завершена");
-                return result;
-
-            } catch (RuntimeException e) {
-                logger.error(
-                        "Ошибка при выполнении операции в транзакции Hibernate",
-                        e
-                );
-                rollback(transaction, e);
-                throw e;
-            }
-        }
-    }
-
-    protected final <T> T executeWithSession(
-            Function<Session, T> operation) {
-
-        try (Session session =
-                     HibernateUtil.getSessionFactory().openSession()) {
-            try {
-                T result = operation.apply(session);
-
-                logger.debug("Операция чтения через Hibernate выполнена");
-
-                return result;
-
-            } catch (RuntimeException e) {
-                logger.error(
-                        "Ошибка при чтении данных через Hibernate",
-                        e
-                );
-
-                throw e;
-            }
         }
     }
 }
