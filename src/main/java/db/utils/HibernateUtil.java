@@ -18,10 +18,7 @@ public final class HibernateUtil {
                     .setProperty("hibernate.connection.driver_class",
                             "org.postgresql.Driver")
                     .setProperty("hibernate.connection.url",
-                            "jdbc:postgresql://" +
-                                    TestConfig.getDbHost() + ":" +
-                                    TestConfig.getDbPort() + "/" +
-                                    TestConfig.getDbName())
+                            TestConfig.getDBUrl())
                     .setProperty("hibernate.connection.username",
                             TestConfig.getDbUsername())
                     .setProperty("hibernate.connection.password",

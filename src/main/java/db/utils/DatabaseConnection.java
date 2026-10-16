@@ -12,14 +12,9 @@ public class DatabaseConnection {
 
     public static Connection getConnection() throws SQLException {
 
-        String url = String.format(
-                "jdbc:postgresql://%s:%s/%s?currentSchema=%s",
-                TestConfig.getDbHost(),
-                TestConfig.getDbPort(),
-                TestConfig.getDbName(),
-        TestConfig.getDbSchema());
+
         return java.sql.DriverManager.getConnection(
-                url,
+                TestConfig.getDBUrl(),
                 TestConfig.getDbUsername(),
                 TestConfig.getDbPassword()
         );

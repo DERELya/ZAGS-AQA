@@ -12,7 +12,8 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@Epic("ZAGS")
+@Feature("DB — Свидетельство о рождении")
 public class DBBirthCertificateTest {
     private static Integer createdCitizenId;
     private Integer createdBirthCertificateId;
@@ -76,7 +77,7 @@ public class DBBirthCertificateTest {
     }
 
     @AfterEach
-    @Step("Удаление свидетельства о смерти после теста")
+    @Step("Удаление свидетельства о рождении после теста")
     void cleanUp() throws SQLException {
         if (createdBirthCertificateId == null) {
             return;

@@ -46,4 +46,14 @@ public class TestConfig {
         }
         return value;
     }
+
+    public static String getDBUrl() {
+        return String.format(
+                "jdbc:postgresql://%s:%s/%s?currentSchema=%s",
+                getDbHost(),
+                getDbPort(),
+                getDbName(),
+                getDbSchema()
+        );
+    }
 }

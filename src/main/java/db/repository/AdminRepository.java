@@ -1,7 +1,6 @@
 package db.repository;
 
 import db.model.Admin;
-import db.model.BirthCertificate;
 import db.utils.DatabaseConnection;
 import io.qameta.allure.Step;
 
