@@ -8,6 +8,7 @@ import api.specs.ResponseSpecs;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
+import model.data.ActionForApplication;
 import model.data.StatusOfApplication;
 import model.data.TypeOfApplication;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,7 +36,7 @@ public class RequestProcessTest {
     void approveApplication() {
 
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
-        body.setAction(StatusOfApplication.APPROVED.getValue());
+        body.setAction(ActionForApplication.APPROVE.getValue());
         body.setStaffid(staffId);
         body.setApplId(applId);
         Response rawResponse = ZagsApiSteps.processApplication(
@@ -186,7 +187,7 @@ public class RequestProcessTest {
     void administrationApplicationWithoutAuth() {
 
         AdministrationApplicantionDto body = new AdministrationApplicantionDto();
-        body.setAction(StatusOfApplication.APPROVED.getValue());
+        body.setAction(ActionForApplication.APPROVE.getValue());
         body.setStaffid(staffId);
         body.setApplId(applId);
 

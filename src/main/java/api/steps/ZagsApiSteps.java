@@ -125,3 +125,4 @@ public final class ZagsApiSteps {
                 .as(ApplicationsResponseDto.class);
     }
 }
+
