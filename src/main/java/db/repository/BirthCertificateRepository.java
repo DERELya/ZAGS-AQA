@@ -60,7 +60,7 @@ public class BirthCertificateRepository {
                        father,
                        grandma,
                        grandpa
-                FROM reg_office.birthcertificates
+                FROM birthcertificates
                 WHERE birthcertificateid = ?
                 """;
 
@@ -95,7 +95,7 @@ public class BirthCertificateRepository {
             throws SQLException {
 
         String sql = """
-                DELETE FROM reg_office.birthcertificates
+                DELETE FROM birthcertificates
                 WHERE birthcertificateid = ?
                 """;
 

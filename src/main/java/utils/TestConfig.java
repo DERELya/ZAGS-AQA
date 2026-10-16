@@ -23,9 +23,8 @@ public class TestConfig {
     public static String getDbPort() {
         return getRequiredValue("db.port", "DB_PORT");
     }
-    public static String getDbName() {
-        return getRequiredValue("db.name", "DB_NAME");
-    }
+
+    public static String getDbName() {return getRequiredValue("db.name", "DB_NAME");}
 
     public static String getDbUsername() {
         return getRequiredValue("db.username", "DB_USERNAME");
@@ -35,6 +34,7 @@ public class TestConfig {
         return getRequiredValue("db.password", "DB_PASSWORD");
     }
 
+    public static String getDbSchema() {return getRequiredValue("db.schema", "DB_SCHEMA");}
 
     private static String getRequiredValue(String propertyName, String envName) {
         String value = System.getProperty(propertyName);
