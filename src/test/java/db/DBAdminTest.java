@@ -3,7 +3,7 @@ package db;
 import api.dto.AdminRequestDto;
 import api.steps.ZagsApiSteps;
 import db.model.Admin;
-import db.repository.AdminRepository;
+import db.repository.AdminDAO;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 import utils.HelperForDate;
@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Epic("ZAGS")
 @Feature("DB — Администратор")
 public class DBAdminTest {
-    private static long createdAdminId;
+    private static Integer createdAdminId;
     private static AdminRequestDto expected;
 
-    private final AdminRepository adminRepository = new AdminRepository();
+    private final AdminDAO adminDAO = new AdminDAO();
 
     @Test
     @DisplayName("Создание администратора")
@@ -28,7 +28,7 @@ public class DBAdminTest {
     @Description("Проверяем, что база данных корректно сохраняет администратора")
     void createAdminAndVerifyDataInDatabase() throws SQLException {
 
-        Admin actual = adminRepository.findById(createdAdminId);
+        Admin actual = adminDAO.findById(createdAdminId);
 
         assertNotNull(actual, "Администратор должен существовать в БД");
         assertAll(
@@ -36,7 +36,7 @@ public class DBAdminTest {
                 () -> assertEquals(expected.getPersonalFirstName(), actual.getName()),
                 () -> assertEquals(expected.getPersonalMiddleName(), actual.getMiddleName()),
                 () -> assertEquals(expected.getPersonalNumberOfPassport(), actual.getPassportNumber()),
-                () -> assertEquals(expected.getDateOfBirth(), HelperForDate.toIsoDate(actual.getDateofbirth())),
+                () -> assertEquals(expected.getDateOfBirth(), HelperForDate.toIsoDate(actual.getDateOfBirth())),
                 () -> assertEquals(expected.getPersonalPhoneNumber(), actual.getPhoneNumber())
         );
     }
@@ -51,7 +51,7 @@ public class DBAdminTest {
     @Step("Удаление администратора после теста")
     void cleanUp() throws SQLException {
         if (createdAdminId!=0) {
-            adminRepository.deleteById(createdAdminId);
+            adminDAO.deleteById(createdAdminId);
         }
     }
 }

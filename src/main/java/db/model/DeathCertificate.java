@@ -3,8 +3,6 @@ package db.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 @Entity
 @Table(name = "deathcertificates")
@@ -13,7 +11,7 @@ public class DeathCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="deathcertificateid")
-    private int deathcertificateid;
+    private Integer deathCertificateId;
 
     @Column(name = "citizenid")
     private Integer citizenId;

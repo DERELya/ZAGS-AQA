@@ -10,13 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class AdminRepository {
+public class AdminDAO {
 
-    public AdminRepository() {
+    public AdminDAO() {
     }
 
     @Step("Получение из БД администратора c id: {staffId}")
-    public Admin findById(long staffId) throws SQLException {
+    public Admin findById(Integer staffId) throws SQLException {
         String sql = """
                 SELECT staffid,
                        surname,
@@ -33,7 +33,7 @@ public class AdminRepository {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setLong(1, staffId);
+            statement.setInt(1, staffId);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
@@ -42,11 +42,11 @@ public class AdminRepository {
 
                 Admin admin = new Admin();
 
-                admin.setStaffid(resultSet.getInt("staffid"));
+                admin.setStaffId(resultSet.getInt("staffid"));
                 admin.setSurname(resultSet.getString("surname"));
                 admin.setName(resultSet.getString("name"));
                 admin.setMiddleName(resultSet.getString("middlename"));
-                admin.setDateofbirth(resultSet.getObject("dateofbirth", LocalDate.class));
+                admin.setDateOfBirth(resultSet.getObject("dateofbirth", LocalDate.class));
                 admin.setPassportNumber(resultSet.getString("passportnumber"));
                 admin.setPhoneNumber(resultSet.getString("phonenumber"));
 
@@ -57,7 +57,7 @@ public class AdminRepository {
     }
 
     @Step("Удаление администратора c id: {staffId}")
-    public void deleteById(long staffId) throws SQLException {
+    public void deleteById(Integer staffId) throws SQLException {
         String sql = """
                 DELETE FROM staff
                 WHERE staffid = ?
@@ -67,7 +67,7 @@ public class AdminRepository {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setLong(1, staffId);
+            statement.setInt(1, staffId);
 
             statement.executeUpdate();
         }

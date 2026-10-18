@@ -10,4 +10,7 @@ public final class HelperForDate {
     public static String toIsoDate(LocalDate date) {
         return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
+    public static String toIsoDateFromTimestamp(String dateTime) {
+        return dateTime.substring(0, 10);
+    }
 }

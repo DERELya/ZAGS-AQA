@@ -1,95 +1,124 @@
 package db;
 
+import api.dto.AppForBirthDto;
+import api.dto.ApplicationRequestDto;
+import api.dto.ApplicationResponseDto;
+import api.steps.ZagsApiSteps;
+import db.hibernate.BirthCertificateDAO;
 import db.model.BirthCertificate;
-import db.model.Citizen;
-import db.repository.BirthCertificateRepository;
-import db.repository.CitizenRepository;
-import db.utils.TestDBDataFactory;
+import db.repository.CitizenDAO;
 import io.qameta.allure.*;
-import org.junit.jupiter.api.*;
+import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import utils.TestDataFactory;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Epic("ZAGS")
 @Feature("DB — Свидетельство о рождении")
 public class DBBirthCertificateTest {
-    private static Integer createdCitizenId;
     private Integer createdBirthCertificateId;
+    private Integer createdCitizenId;
 
-    private static final CitizenRepository citizenRepository =
-            new CitizenRepository();
-    private static final BirthCertificateRepository birthCertificateRepository =
-            new BirthCertificateRepository();
+    private BirthCertificate expectedBirthCertificate;
 
+    private final BirthCertificateDAO birthCertificateDAO =
+            new BirthCertificateDAO();
+
+    private final CitizenDAO citizenDAO = new CitizenDAO();
+
+
+    @BeforeEach
+    @Step("Создание заявки на регистрацию смерти через API")
+    void createBirthApplication() {
+        ApplicationRequestDto requestDto =
+                TestDataFactory.birthApplication();
+
+        ApplicationResponseDto<AppForBirthDto> response =
+                ZagsApiSteps.sendApplication(requestDto, new TypeRef<ApplicationResponseDto<AppForBirthDto>>() {
+                });
+
+        createdBirthCertificateId = response.getData().getBirthCertificateId();
+
+        createdCitizenId = response.getData().getCitizenId();
+
+        expectedBirthCertificate = new BirthCertificate();
+
+        expectedBirthCertificate.setBirthCertificateId(createdBirthCertificateId);
+        expectedBirthCertificate.setCitizenId(createdCitizenId);
+        expectedBirthCertificate.setPlaceOfBirth(requestDto.getBirthPlace());
+        expectedBirthCertificate.setMother(requestDto.getBirthMother());
+        expectedBirthCertificate.setFather(requestDto.getBirthFather());
+        expectedBirthCertificate.setGrandma(requestDto.getBirthGrandma());
+        expectedBirthCertificate.setGrandpa(requestDto.getBirthGrandpa());
+    }
+
+    @AfterEach
+    @Step("Удаление тестовых данных")
+    void cleanUp() throws SQLException {
+        try {
+            if (createdBirthCertificateId != 0) {
+                birthCertificateDAO.deleteById(
+                        createdBirthCertificateId
+                );
+            }
+        } finally {
+            try {
+                if (createdCitizenId != 0) {
+                    citizenDAO.deleteById(createdCitizenId);
+                }
+            } finally {
+                createdBirthCertificateId = 0;
+                createdCitizenId = 0;
+            }
+        }
+    }
 
     @Test
     @DisplayName("Создание свидетельства о рождении")
     @Story("Тестирование базы данных")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Проверяем, что база данных корректно сохраняет свидетельство о рождении")
-    void createBirthCertificateAndVerifyDataInDatabase() throws SQLException {
-        BirthCertificate expected = TestDBDataFactory.createBirthCertificate(createdCitizenId);
+    void VerifyDataInDatabaseBirthCertificate() throws SQLException {
 
-        createdBirthCertificateId = birthCertificateRepository.save(expected);
-
-        BirthCertificate actualBirthCertificate = birthCertificateRepository.findById(createdBirthCertificateId);
+        BirthCertificate actualBirthCertificate = birthCertificateDAO.findById(createdBirthCertificateId);
 
         assertAll(
                 () -> assertEquals(
-                        createdBirthCertificateId,
+                        expectedBirthCertificate.getBirthCertificateId(),
                         actualBirthCertificate.getBirthCertificateId()
                 ),
                 () -> assertEquals(
-                        createdCitizenId,
+                        expectedBirthCertificate.getCitizenId(),
                         actualBirthCertificate.getCitizenId()
                 ),
                 () -> assertEquals(
-                        expected.getPlaceOfBirth(),
+                        expectedBirthCertificate.getPlaceOfBirth(),
                         actualBirthCertificate.getPlaceOfBirth()
                 ),
                 () -> assertEquals(
-                        expected.getMother(),
+                        expectedBirthCertificate.getMother(),
                         actualBirthCertificate.getMother()
                 ),
                 () -> assertEquals(
-                        expected.getFather(),
+                        expectedBirthCertificate.getFather(),
                         actualBirthCertificate.getFather()
                 ),
                 () -> assertEquals(
-                        expected.getGrandma(),
+                        expectedBirthCertificate.getGrandma(),
                         actualBirthCertificate.getGrandma()
                 ),
                 () -> assertEquals(
-                        expected.getGrandpa(),
+                        expectedBirthCertificate.getGrandpa(),
                         actualBirthCertificate.getGrandpa()
                 )
         );
 
-    }
-
-    @BeforeAll
-    @Step("Создание гражданина в бд для теста")
-    static void createCitizen() {
-        Citizen citizen = TestDBDataFactory.createCitizen();
-        createdCitizenId = citizenRepository.save(citizen);
-    }
-
-    @AfterEach
-    @Step("Удаление свидетельства о рождении после теста")
-    void cleanUp() throws SQLException {
-        if (createdBirthCertificateId == null) {
-            return;
-        }
-        birthCertificateRepository.deleteById(createdBirthCertificateId);
-    }
-
-    @AfterAll
-    @Step("Удаление гражданина после теста")
-    static void cleanUpCitizen() {
-        if (createdCitizenId != null) {
-            citizenRepository.deleteById(createdCitizenId);
-        }
     }
 }

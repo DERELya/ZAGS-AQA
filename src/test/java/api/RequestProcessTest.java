@@ -5,6 +5,7 @@ import api.dto.ApplicationDto;
 import api.dto.ApplicationResponseDto;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
+import api.steps.ZagsApiSteps;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
@@ -16,17 +17,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
-import api.steps.ZagsApiSteps;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("ZAGS")
 @Feature("API — обработка заявок")
 public class RequestProcessTest {
 
-    private static long staffId;
-    private  long applId;
+    private static Integer staffId;
+    private Integer applId;
 
     @Test
     @DisplayName("Позитивный сценарий одобрения заявки")
@@ -48,7 +47,8 @@ public class RequestProcessTest {
 
         ApplicationResponseDto<ApplicationDto> response =
                 rawResponse.as(
-                        new TypeRef<ApplicationResponseDto<ApplicationDto>>() {}
+                        new TypeRef<ApplicationResponseDto<ApplicationDto>>() {
+                        }
                 );
 
         ApplicationDto application = response.getData();

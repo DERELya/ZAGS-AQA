@@ -5,29 +5,20 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "staff")
 @Data
 public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer staffid;
 
-    @Column(name = "surname")
+    private Integer staffId;
+
     private String surname;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "middlename")
     private String middleName;
 
-    @Column(name = "dateofbirth")
-    private LocalDate dateofbirth;
+    private LocalDate dateOfBirth;
 
-    @Column(name = "passportnumber")
     private String passportNumber;
 
-    @Column(name = "phonenumber")
     private String phoneNumber;
 }

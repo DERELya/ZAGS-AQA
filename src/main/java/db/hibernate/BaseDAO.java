@@ -1,6 +1,5 @@
-package db.repository;
+package db.hibernate;
 
-import db.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -9,7 +8,7 @@ import org.hibernate.Transaction;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class BaseRepository<T, ID> {
+public class BaseDAO<T, ID> {
 
     private final Class<T> entityClass;
     private final Function<T, ID> idExtractor;
@@ -17,7 +16,7 @@ public class BaseRepository<T, ID> {
     private final Logger logger =
             LogManager.getLogger(getClass());
 
-    protected BaseRepository(
+    protected BaseDAO(
             Class<T> entityClass,
             Function<T, ID> idExtractor) {
 

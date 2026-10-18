@@ -5,6 +5,7 @@ import api.dto.ApplicationDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import io.qameta.allure.*;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
 import model.data.StatusOfApplication;
 import model.data.TypeOfApplication;
@@ -27,8 +28,8 @@ public class SendUserRequestTest {
     void sendUserRequest() {
 
         ApplicationResponseDto<AppForDeathDto> response =
-                ZagsApiSteps.sendDeathApplication(
-                        TestDataFactory.deathApplication()
+                ZagsApiSteps.sendApplication(
+                        TestDataFactory.deathApplication(),new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {}
                 );
 
         assertNotNull(response.getData(), "Данные заявки отсутствуют");

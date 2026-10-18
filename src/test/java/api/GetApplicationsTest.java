@@ -199,8 +199,8 @@ public class GetApplicationsTest {
                 )
         );
 
-        Set<Long> firstIds = getApplicationIds(firstApplications, "первой");
-        Set<Long> secondIds = getApplicationIds(secondApplications, "второй");
+        Set<Integer> firstIds = getApplicationIds(firstApplications, "первой");
+        Set<Integer> secondIds = getApplicationIds(secondApplications, "второй");
 
         assertEquals(
                 firstApplications.size(),
@@ -214,7 +214,7 @@ public class GetApplicationsTest {
                 "На второй странице есть повторяющиеся applicationid"
         );
 
-        Set<Long> intersection = new HashSet<>(firstIds);
+        Set<Integer> intersection = new HashSet<>(firstIds);
         intersection.retainAll(secondIds);
 
         assertTrue(
@@ -238,7 +238,7 @@ public class GetApplicationsTest {
         return total;
     }
 
-    private Set<Long> getApplicationIds(List<ApplicationDto> applications, String pageDescription) {
+    private Set<Integer> getApplicationIds(List<ApplicationDto> applications, String pageDescription) {
         return applications.stream()
                 .map(application -> {
                     assertNotNull(
