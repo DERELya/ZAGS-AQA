@@ -4,9 +4,9 @@ import api.dto.AppForBirthDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
-import db.hibernate.BirthCertificateDAO;
+import db.dao.CitizenDAO;
+import db.hibernate.dao.BirthCertificateDAO;
 import db.model.BirthCertificate;
-import db.repository.CitizenDAO;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -15,10 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
 
-import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("ZAGS")
 @Feature("DB — Свидетельство о рождении")
@@ -61,21 +58,21 @@ public class DBBirthCertificateTest {
 
     @AfterEach
     @Step("Удаление тестовых данных")
-    void cleanUp() throws SQLException {
+    void cleanUp() {
         try {
-            if (createdBirthCertificateId != 0) {
-                birthCertificateDAO.deleteById(
-                        createdBirthCertificateId
-                );
+            if (createdBirthCertificateId != null) {
+                assertDoesNotThrow(
+                        () -> birthCertificateDAO.deleteById(createdBirthCertificateId), "Не удалось удалить свидетельство о рождении");
             }
         } finally {
             try {
-                if (createdCitizenId != 0) {
-                    citizenDAO.deleteById(createdCitizenId);
+                if (createdCitizenId != null) {
+                    assertDoesNotThrow(
+                            () -> citizenDAO.deleteById(createdCitizenId), "Не удалось удалить гражданина");
                 }
             } finally {
-                createdBirthCertificateId = 0;
-                createdCitizenId = 0;
+                createdBirthCertificateId = null;
+                createdCitizenId = null;
             }
         }
     }
@@ -85,9 +82,12 @@ public class DBBirthCertificateTest {
     @Story("Тестирование базы данных")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Проверяем, что база данных корректно сохраняет свидетельство о рождении")
-    void VerifyDataInDatabaseBirthCertificate() throws SQLException {
+    void verifyBirthCertificateInDatabase() {
 
-        BirthCertificate actualBirthCertificate = birthCertificateDAO.findById(createdBirthCertificateId);
+        BirthCertificate actualBirthCertificate = assertDoesNotThrow(
+                () -> birthCertificateDAO.findById(createdBirthCertificateId),
+                "Ошибка при получении свидетельства о рождении из БД"
+        );
 
         assertAll(
                 () -> assertEquals(

@@ -2,14 +2,15 @@ package db;
 
 import api.dto.AdminRequestDto;
 import api.steps.ZagsApiSteps;
+import db.dao.AdminDAO;
 import db.model.Admin;
-import db.repository.AdminDAO;
 import io.qameta.allure.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import utils.HelperForDate;
 import utils.TestDataFactory;
-
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,14 +22,28 @@ public class DBAdminTest {
 
     private final AdminDAO adminDAO = new AdminDAO();
 
+    @BeforeEach
+    void createAdmin() {
+        expected = TestDataFactory.adminRequest();
+        createdAdminId = ZagsApiSteps.createAdministrator(expected);
+    }
+
+    @AfterEach
+    @Step("Удаление администратора после теста")
+    void cleanUp() {
+        if (createdAdminId != null) {
+            assertDoesNotThrow(() -> adminDAO.deleteById(createdAdminId), "Не удалось удалить администратора");
+        }
+    }
+
     @Test
     @DisplayName("Создание администратора")
     @Story("Тестирование базы данных")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Проверяем, что база данных корректно сохраняет администратора")
-    void createAdminAndVerifyDataInDatabase() throws SQLException {
+    void verifyAdminInDatabase() {
 
-        Admin actual = adminDAO.findById(createdAdminId);
+        Admin actual = assertDoesNotThrow(() -> adminDAO.findById(createdAdminId), "Ошибка при получении администратора из БД");
 
         assertNotNull(actual, "Администратор должен существовать в БД");
         assertAll(
@@ -39,19 +54,5 @@ public class DBAdminTest {
                 () -> assertEquals(expected.getDateOfBirth(), HelperForDate.toIsoDate(actual.getDateOfBirth())),
                 () -> assertEquals(expected.getPersonalPhoneNumber(), actual.getPhoneNumber())
         );
-    }
-
-    @BeforeAll
-    static void createAdmin() throws SQLException {
-        expected = TestDataFactory.adminRequest();
-        createdAdminId = ZagsApiSteps.createAdministrator(expected);
-    }
-
-    @AfterEach
-    @Step("Удаление администратора после теста")
-    void cleanUp() throws SQLException {
-        if (createdAdminId!=0) {
-            adminDAO.deleteById(createdAdminId);
-        }
     }
 }

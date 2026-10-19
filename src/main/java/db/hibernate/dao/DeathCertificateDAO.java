@@ -1,4 +1,4 @@
-package db.hibernate;
+package db.hibernate.dao;
 
 import db.model.DeathCertificate;
 import io.qameta.allure.Step;

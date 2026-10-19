@@ -4,9 +4,9 @@ import api.dto.AppForMerrigeDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
-import db.hibernate.MerrigeCertificateDAO;
+import db.dao.CitizenDAO;
+import db.hibernate.dao.MerrigeCertificateDAO;
 import db.model.MerrigeCertificate;
-import db.repository.CitizenDAO;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import utils.TestDataFactory;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -64,21 +63,22 @@ public class DBMerrigeCertificateIdTest {
 
     @AfterEach
     @Step("Удаление тестовых данных")
-    void cleanUp() throws SQLException {
+    void cleanUp() {
         try {
-            if (createdMerrigeCertificateId != 0) {
-                merrigeCertificateDAO.deleteById(
-                        createdMerrigeCertificateId
-                );
+            if (createdMerrigeCertificateId != null) {
+                assertDoesNotThrow(() -> merrigeCertificateDAO.deleteById(createdMerrigeCertificateId),
+                        "Не удалось удалить свидетельство о браке");
+
             }
         } finally {
             try {
-                if (createdCitizenId != 0) {
-                    citizenDAO.deleteById(createdCitizenId);
+                if (createdCitizenId != null) {
+                    assertDoesNotThrow(() -> citizenDAO.deleteById(createdCitizenId),
+                            "Не удалось удалить гражданина");
                 }
             } finally {
-                createdMerrigeCertificateId = 0;
-                createdCitizenId = 0;
+                createdMerrigeCertificateId = null;
+                createdCitizenId = null;
             }
         }
     }
@@ -89,7 +89,7 @@ public class DBMerrigeCertificateIdTest {
     @Story("Тестирование базы данных")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Проверяем, что база данных корректно сохраняет свидетельство о браке")
-    void VerifyDataInDatabaseMerrigeCertificate() {
+    void verifyMerrigeCertificateInDatabase() {
 
         MerrigeCertificate actual = merrigeCertificateDAO.findById(createdMerrigeCertificateId);
 

@@ -1,4 +1,4 @@
-package db.repository;
+package db.dao;
 
 import db.model.Citizen;
 import db.utils.DatabaseConnection;
