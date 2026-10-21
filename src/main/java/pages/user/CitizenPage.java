@@ -92,6 +92,7 @@ public class CitizenPage extends BasePage {
 
         return nextPage.get();
     }
+    @Step("нажатие кнопки далее")
     public void clickNextButton(){
         click(nextButton);
     }
