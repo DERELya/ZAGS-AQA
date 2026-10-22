@@ -1,6 +1,8 @@
 package db.hibernate;
 
-import db.model.*;
+import db.model.BirthCertificate;
+import db.model.DeathCertificate;
+import db.model.MerrigeCertificate;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import utils.TestConfig;
@@ -20,7 +22,7 @@ public final class HibernateUtil {
                     .setProperty("hibernate.connection.password",
                             TestConfig.getDbPassword())
                     .setProperty("hibernate.hbm2ddl.auto", "validate")
-                    .setProperty("hibernate.default_schema","reg_office")
+                    .setProperty("hibernate.default_schema", "reg_office")
                     .buildSessionFactory();
 
     private HibernateUtil() {

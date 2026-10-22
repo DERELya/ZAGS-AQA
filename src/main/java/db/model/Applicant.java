@@ -1,6 +1,5 @@
 package db.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -18,6 +17,7 @@ public class Applicant {
     private String phoneNumber;
 
     private String registrationAddress;
+
     public Applicant() {
     }
 }

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name="merrigecertificates")
+@Table(name = "merrigecertificates")
 public class MerrigeCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,21 +20,21 @@ public class MerrigeCertificate {
     @Column(name = "dateofmerrige")
     private LocalDate dateOfMerrige;
 
-    @Column(name="surnameofspouse")
+    @Column(name = "surnameofspouse")
     private String surnameOfSpouce;
 
-    @Column(name="newsurnameofspouse")
+    @Column(name = "newsurnameofspouse")
     private String newSurnameOfSpouce;
 
-    @Column(name="nameofspouse")
+    @Column(name = "nameofspouse")
     private String nameOfSpouce;
 
-    @Column(name="middlenameofspouse")
+    @Column(name = "middlenameofspouse")
     private String middlenameOfSpouce;
 
-    @Column(name="passportnumberofspouse")
+    @Column(name = "passportnumberofspouse")
     private String passportNumberOfSpouce;
 
-    @Column(name="dateofbirthofspouse")
+    @Column(name = "dateofbirthofspouse")
     private LocalDate dateOfBirthOfSpouce;
 }

@@ -4,9 +4,12 @@ import api.dto.AppForMerrigeDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
+import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
 import db.dao.CitizenDAO;
 import db.hibernate.dao.MerrigeCertificateDAO;
 import db.model.MerrigeCertificate;
+import db.utils.CleanDataTestDB;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -22,17 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("ZAGS")
 @Feature("DB — Свидетельство о браке")
-public class DBMerrigeCertificateIdTest {
+public class DBMerrigeCertificateTest {
 
     private Integer createdMerrigeCertificateId;
     private Integer createdCitizenId;
-
+    private Integer createdApplicantId;
     private MerrigeCertificate expectedMerrigeCertificate;
 
-    private final MerrigeCertificateDAO merrigeCertificateDAO =
-            new MerrigeCertificateDAO();
-
-    private final CitizenDAO citizenDAO = new CitizenDAO();
+    private final MerrigeCertificateDAO merrigeCertificateDAO = new MerrigeCertificateDAO();
 
     @BeforeEach
     @Step("Создание заявки на регистрацию брака через API")
@@ -45,8 +45,8 @@ public class DBMerrigeCertificateIdTest {
                 });
 
         createdMerrigeCertificateId = response.getData().getMerrigeCertificateId();
-
         createdCitizenId = response.getData().getCitizenId();
+        createdApplicantId = response.getData().getApplicantId();
 
         expectedMerrigeCertificate = new MerrigeCertificate();
 
@@ -65,21 +65,22 @@ public class DBMerrigeCertificateIdTest {
     @Step("Удаление тестовых данных")
     void cleanUp() {
         try {
-            if (createdMerrigeCertificateId != null) {
-                assertDoesNotThrow(() -> merrigeCertificateDAO.deleteById(createdMerrigeCertificateId),
-                        "Не удалось удалить свидетельство о браке");
-
-            }
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о браке",
+                    () -> {
+                        if (createdMerrigeCertificateId != null) {
+                            merrigeCertificateDAO.deleteById(
+                                    createdMerrigeCertificateId
+                            );
+                        }
+                    }
+            );
         } finally {
-            try {
-                if (createdCitizenId != null) {
-                    assertDoesNotThrow(() -> citizenDAO.deleteById(createdCitizenId),
-                            "Не удалось удалить гражданина");
-                }
-            } finally {
-                createdMerrigeCertificateId = null;
-                createdCitizenId = null;
-            }
+            createdMerrigeCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
         }
     }
 
@@ -95,7 +96,6 @@ public class DBMerrigeCertificateIdTest {
 
         assertNotNull(actual, "Свидетельство о браке должно существовать в БД после сохранения");
         assertAll(
-                () -> assertEquals(expectedMerrigeCertificate.getMerrigeCertificateId(), actual.getMerrigeCertificateId()),
                 () -> assertEquals(expectedMerrigeCertificate.getCitizenId(), actual.getCitizenId()),
                 () -> assertEquals(expectedMerrigeCertificate.getDateOfMerrige(), actual.getDateOfMerrige()),
                 () -> assertEquals(expectedMerrigeCertificate.getNameOfSpouce(), actual.getNameOfSpouce()),

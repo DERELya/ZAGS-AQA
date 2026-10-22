@@ -56,15 +56,10 @@ public class ApplicantDAO {
         }
     }
 
-    @Step("Удаление заявителя c id: {applicantId}")
+    @Step("Удаление заявителя с id: {applicantId}")
     public void deleteById(Integer applicantId) throws SQLException {
         String deleteApplicantSql = """
                 DELETE FROM applicants
-                WHERE applicantid = ?
-                """;
-
-        String deleteApplicationsSql = """
-                DELETE FROM applications
                 WHERE applicantid = ?
                 """;
 
@@ -73,13 +68,8 @@ public class ApplicantDAO {
 
             try {
                 try (PreparedStatement statement =
-                             connection.prepareStatement(deleteApplicationsSql)) {
-                    statement.setLong(1, applicantId);
-                    statement.executeUpdate();
-                }
-                try (PreparedStatement statement =
                              connection.prepareStatement(deleteApplicantSql)) {
-                    statement.setLong(1, applicantId);
+                    statement.setInt(1, applicantId);
                     statement.executeUpdate();
                 }
 

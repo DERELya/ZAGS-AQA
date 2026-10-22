@@ -4,8 +4,12 @@ import api.dto.AppForDeathDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
+import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
 import db.dao.CitizenDAO;
+import db.hibernate.dao.DeathCertificateDAO;
 import db.model.Citizen;
+import db.utils.CleanDataTestDB;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -22,9 +26,11 @@ public class DBCitizenTest {
 
     private Integer createdCitizenId;
     private Citizen expectedCitizen;
+    private Integer createdDeathCertificateId;
+    private Integer createdApplicantId;
 
-    private final CitizenDAO citizenDAO =
-            new CitizenDAO();
+    private final CitizenDAO citizenDAO = new CitizenDAO();
+    private final DeathCertificateDAO deathCertificateDAO = new DeathCertificateDAO();
 
     @BeforeEach
     void createCitizen() {
@@ -35,28 +41,39 @@ public class DBCitizenTest {
         expectedCitizen.setName(requestDto.getCitizenFirstName());
         expectedCitizen.setSurname(requestDto.getCitizenLastName());
         expectedCitizen.setMiddleName(requestDto.getCitizenMiddleName());
-        expectedCitizen.setRegistrationAddress(
-                requestDto.getCitizenAddress()
-        );
-        expectedCitizen.setGender(
-                requestDto.getCitizenGender()
-        );
-        expectedCitizen.setPassportNumber(
-                requestDto.getCitizenNumberOfPassport()
-        );
+        expectedCitizen.setRegistrationAddress(requestDto.getCitizenAddress());
+        expectedCitizen.setGender(requestDto.getCitizenGender());
+        expectedCitizen.setPassportNumber(requestDto.getCitizenNumberOfPassport());
 
         ApplicationResponseDto<AppForDeathDto> response =
                 ZagsApiSteps.sendApplication(requestDto, new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {
                 });
 
         createdCitizenId = response.getData().getCitizenId();
+        createdApplicantId=response.getData().getApplicantId();
+        createdDeathCertificateId=response.getData().getDeathCertificateId();
     }
 
     @AfterEach
-    @Step("Удаление гражданина после теста")
+    @Step("Удаление данных после теста")
     void cleanUp() {
-        if (createdCitizenId != null) {
-            assertDoesNotThrow(() -> citizenDAO.deleteById(createdCitizenId), "Не удалось удалить гражданина");
+        try {
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о смерти",
+                    () -> {
+                        if (createdDeathCertificateId != null) {
+                            deathCertificateDAO.deleteById(
+                                    createdDeathCertificateId
+                            );
+                        }
+                    }
+            );
+        } finally {
+            createdDeathCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
         }
     }
 

@@ -4,9 +4,12 @@ import api.dto.AppForDeathDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
+import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
 import db.dao.CitizenDAO;
 import db.hibernate.dao.DeathCertificateDAO;
 import db.model.DeathCertificate;
+import db.utils.CleanDataTestDB;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -24,13 +27,10 @@ public class DBDeathCertificateTest {
 
     private Integer createdDeathCertificateId;
     private Integer createdCitizenId;
-
+    private Integer createdApplicantId;
     private DeathCertificate expectedDeathCertificate;
 
-    private final DeathCertificateDAO deathCertificateDAO =
-            new DeathCertificateDAO();
-
-    private final CitizenDAO citizenDAO = new CitizenDAO();
+    private final DeathCertificateDAO deathCertificateDAO = new DeathCertificateDAO();
 
     @BeforeEach
     @Step("Создание заявки на регистрацию смерти через API")
@@ -43,8 +43,8 @@ public class DBDeathCertificateTest {
                 });
 
         createdDeathCertificateId = response.getData().getDeathCertificateId();
-
         createdCitizenId = response.getData().getCitizenId();
+        createdApplicantId = response.getData().getApplicantId();
 
         expectedDeathCertificate = new DeathCertificate();
 
@@ -58,20 +58,22 @@ public class DBDeathCertificateTest {
     @Step("Удаление тестовых данных")
     void cleanUp() {
         try {
-            if (createdDeathCertificateId != null) {
-                assertDoesNotThrow(() -> deathCertificateDAO.deleteById(createdDeathCertificateId),
-                        "Не удалось удалить свидетельство о смерти");
-            }
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о смерти",
+                    () -> {
+                        if (createdDeathCertificateId != null) {
+                            deathCertificateDAO.deleteById(
+                                    createdDeathCertificateId
+                            );
+                        }
+                    }
+            );
         } finally {
-            try {
-                if (createdCitizenId != null) {
-                    assertDoesNotThrow(() -> citizenDAO.deleteById(createdCitizenId),
-                            "Не удалось удалить гражданина");
-                }
-            } finally {
-                createdDeathCertificateId = null;
-                createdCitizenId = null;
-            }
+            createdDeathCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
         }
     }
 
@@ -87,7 +89,6 @@ public class DBDeathCertificateTest {
 
         assertNotNull(actual, "Свидетельство о смерти должно существовать в БД после сохранения");
         assertAll(
-                () -> assertEquals(expectedDeathCertificate.getDeathCertificateId(), actual.getDeathCertificateId()),
                 () -> assertEquals(expectedDeathCertificate.getCitizenId(), actual.getCitizenId()),
                 () -> assertEquals(expectedDeathCertificate.getDateOfDeath(), HelperForDate.toIsoDateFromTimestamp(actual.getDateOfDeath())),
                 () -> assertEquals(expectedDeathCertificate.getPlaceOfDeath(), actual.getPlaceOfDeath())

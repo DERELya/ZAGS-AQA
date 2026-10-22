@@ -24,6 +24,7 @@ public class BaseDAO<T, ID> {
         this.entityClass = entityClass;
         this.idExtractor = idExtractor;
     }
+
     public ID save(T entity) {
         Objects.requireNonNull(entity, "Entity не должна быть null");
 
@@ -37,6 +38,7 @@ public class BaseDAO<T, ID> {
                 }
         );
     }
+
     public T findById(ID id) {
         return executeWithSession(
                 "Поиск " + entityClass.getCanonicalName() + ", ID=" + id,

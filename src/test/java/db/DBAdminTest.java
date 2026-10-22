@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Epic("ZAGS")
 @Feature("DB — Администратор")
 public class DBAdminTest {
-    private static Integer createdAdminId;
-    private static AdminRequestDto expected;
+    private Integer createdAdminId;
+    private AdminRequestDto expected;
 
     private final AdminDAO adminDAO = new AdminDAO();
 

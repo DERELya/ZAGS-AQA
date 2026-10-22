@@ -10,7 +10,7 @@ public class DeathCertificate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="deathcertificateid")
+    @Column(name = "deathcertificateid")
     private Integer deathCertificateId;
 
     @Column(name = "citizenid")

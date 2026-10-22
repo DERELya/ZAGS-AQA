@@ -65,32 +65,13 @@ public class CitizenDAO {
                 WHERE citizenid = ?
                 """;
 
-        String deleteApplicationsSql = """
-                DELETE FROM applications
-                WHERE citizenId = ?
-                """;
-        String deleteDeathCertificateSql = """
-                DELETE FROM deathcertificates
-                WHERE citizenid = ?
-                """;
-
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
 
             try {
                 try (PreparedStatement statement =
-                             connection.prepareStatement(deleteApplicationsSql)) {
-                    statement.setLong(1, citizenId);
-                    statement.executeUpdate();
-                }
-                try (PreparedStatement statement =
-                             connection.prepareStatement(deleteDeathCertificateSql)) {
-                    statement.setLong(1, citizenId);
-                    statement.executeUpdate();
-                }
-                try (PreparedStatement statement =
                              connection.prepareStatement(deleteCitizenSql)) {
-                    statement.setLong(1, citizenId);
+                    statement.setInt(1, citizenId);
                     statement.executeUpdate();
                 }
 

@@ -5,7 +5,11 @@ import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
 import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
+import db.dao.CitizenDAO;
+import db.hibernate.dao.DeathCertificateDAO;
 import db.model.Applicant;
+import db.utils.CleanDataTestDB;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -21,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DBApplicantTest {
     private Integer createdApplicantId;
     private Applicant expectedApplicant;
+    private Integer createdCitizenId;
+    private Integer createdDeathCertificateId;
 
-    private final ApplicantDAO applicantDAO =
-            new ApplicantDAO();
+    private final ApplicantDAO applicantDAO = new ApplicantDAO();
+    private final DeathCertificateDAO deathCertificateDAO = new DeathCertificateDAO();
 
     @BeforeEach
     void createApplicant() {
@@ -50,13 +56,30 @@ public class DBApplicantTest {
                 });
 
         createdApplicantId = response.getData().getApplicantId();
+        createdCitizenId = response.getData().getCitizenId();
+        createdDeathCertificateId = response.getData().getDeathCertificateId();
     }
 
     @AfterEach
-    @Step("Удаление заявителя после теста")
+    @Step("Удаление данных после теста")
     void cleanUp() {
-        if (createdApplicantId != null) {
-            assertDoesNotThrow(() -> applicantDAO.deleteById(createdApplicantId), "Не удалось удалить заявителя");
+        try {
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о смерти",
+                    () -> {
+                        if (createdDeathCertificateId != null) {
+                            deathCertificateDAO.deleteById(
+                                    createdDeathCertificateId
+                            );
+                        }
+                    }
+            );
+        } finally {
+            createdDeathCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
         }
     }
 
@@ -70,7 +93,6 @@ public class DBApplicantTest {
         Applicant actual = assertDoesNotThrow(() -> applicantDAO.findById(createdApplicantId), "Ошибка при получении заявителя из БД");
 
         assertNotNull(actual, "Заявитель должен существовать в БД");
-        System.out.println(actual);
         assertAll(
                 () -> assertEquals(expectedApplicant.getSurname(), actual.getSurname()),
                 () -> assertEquals(expectedApplicant.getName(), actual.getName()),

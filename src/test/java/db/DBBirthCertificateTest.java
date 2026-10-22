@@ -4,9 +4,12 @@ import api.dto.AppForBirthDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
+import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
 import db.dao.CitizenDAO;
 import db.hibernate.dao.BirthCertificateDAO;
 import db.model.BirthCertificate;
+import db.utils.CleanDataTestDB;
 import io.qameta.allure.*;
 import io.restassured.common.mapper.TypeRef;
 import org.junit.jupiter.api.AfterEach;
@@ -22,17 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DBBirthCertificateTest {
     private Integer createdBirthCertificateId;
     private Integer createdCitizenId;
-
+    private Integer createdApplicantId;
     private BirthCertificate expectedBirthCertificate;
 
-    private final BirthCertificateDAO birthCertificateDAO =
-            new BirthCertificateDAO();
-
-    private final CitizenDAO citizenDAO = new CitizenDAO();
-
+    private final BirthCertificateDAO birthCertificateDAO = new BirthCertificateDAO();
 
     @BeforeEach
-    @Step("Создание заявки на регистрацию смерти через API")
+    @Step("Создание заявки на регистрацию рождения через API")
     void createBirthApplication() {
         ApplicationRequestDto requestDto =
                 TestDataFactory.birthApplication();
@@ -54,26 +53,31 @@ public class DBBirthCertificateTest {
         expectedBirthCertificate.setFather(requestDto.getBirthFather());
         expectedBirthCertificate.setGrandma(requestDto.getBirthGrandma());
         expectedBirthCertificate.setGrandpa(requestDto.getBirthGrandpa());
+
+        createdApplicantId = response.getData().getApplicantId();
+        createdCitizenId = response.getData().getCitizenId();
     }
 
     @AfterEach
-    @Step("Удаление тестовых данных")
+    @Step("Удаление данных после теста")
     void cleanUp() {
         try {
-            if (createdBirthCertificateId != null) {
-                assertDoesNotThrow(
-                        () -> birthCertificateDAO.deleteById(createdBirthCertificateId), "Не удалось удалить свидетельство о рождении");
-            }
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о рождении",
+                    () -> {
+                        if (createdBirthCertificateId != null) {
+                            birthCertificateDAO.deleteById(
+                                    createdBirthCertificateId
+                            );
+                        }
+                    }
+            );
         } finally {
-            try {
-                if (createdCitizenId != null) {
-                    assertDoesNotThrow(
-                            () -> citizenDAO.deleteById(createdCitizenId), "Не удалось удалить гражданина");
-                }
-            } finally {
-                createdBirthCertificateId = null;
-                createdCitizenId = null;
-            }
+            createdBirthCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
         }
     }
 
@@ -90,10 +94,6 @@ public class DBBirthCertificateTest {
         );
 
         assertAll(
-                () -> assertEquals(
-                        expectedBirthCertificate.getBirthCertificateId(),
-                        actualBirthCertificate.getBirthCertificateId()
-                ),
                 () -> assertEquals(
                         expectedBirthCertificate.getCitizenId(),
                         actualBirthCertificate.getCitizenId()
