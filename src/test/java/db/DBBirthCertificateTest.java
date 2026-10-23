@@ -1,0 +1,124 @@
+package db;
+
+import api.dto.AppForBirthDto;
+import api.dto.ApplicationRequestDto;
+import api.dto.ApplicationResponseDto;
+import api.steps.ZagsApiSteps;
+import db.dao.ApplicantDAO;
+import db.dao.ApplicationDAO;
+import db.dao.CitizenDAO;
+import db.hibernate.dao.BirthCertificateDAO;
+import db.model.BirthCertificate;
+import db.utils.CleanDataTestDB;
+import io.qameta.allure.*;
+import io.restassured.common.mapper.TypeRef;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import utils.TestDataFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Epic("ZAGS")
+@Feature("DB — Свидетельство о рождении")
+public class DBBirthCertificateTest {
+    private Integer createdBirthCertificateId;
+    private Integer createdCitizenId;
+    private Integer createdApplicantId;
+    private BirthCertificate expectedBirthCertificate;
+
+    private final BirthCertificateDAO birthCertificateDAO = new BirthCertificateDAO();
+
+    @BeforeEach
+    @Step("Создание заявки на регистрацию рождения через API")
+    void createBirthApplication() {
+        ApplicationRequestDto requestDto =
+                TestDataFactory.birthApplication();
+
+        ApplicationResponseDto<AppForBirthDto> response =
+                ZagsApiSteps.sendApplication(requestDto, new TypeRef<ApplicationResponseDto<AppForBirthDto>>() {
+                });
+
+        createdBirthCertificateId = response.getData().getBirthCertificateId();
+
+        createdCitizenId = response.getData().getCitizenId();
+
+        expectedBirthCertificate = new BirthCertificate();
+
+        expectedBirthCertificate.setBirthCertificateId(createdBirthCertificateId);
+        expectedBirthCertificate.setCitizenId(createdCitizenId);
+        expectedBirthCertificate.setPlaceOfBirth(requestDto.getBirthPlace());
+        expectedBirthCertificate.setMother(requestDto.getBirthMother());
+        expectedBirthCertificate.setFather(requestDto.getBirthFather());
+        expectedBirthCertificate.setGrandma(requestDto.getBirthGrandma());
+        expectedBirthCertificate.setGrandpa(requestDto.getBirthGrandpa());
+
+        createdApplicantId = response.getData().getApplicantId();
+        createdCitizenId = response.getData().getCitizenId();
+    }
+
+    @AfterEach
+    @Step("Удаление данных после теста")
+    void cleanUp() {
+        try {
+            CleanDataTestDB.cleanUp(
+                    createdApplicantId,
+                    createdCitizenId,
+                    "свидетельство о рождении",
+                    () -> {
+                        if (createdBirthCertificateId != null) {
+                            birthCertificateDAO.deleteById(
+                                    createdBirthCertificateId
+                            );
+                        }
+                    }
+            );
+        } finally {
+            createdBirthCertificateId = null;
+            createdApplicantId = null;
+            createdCitizenId = null;
+        }
+    }
+
+    @Test
+    @DisplayName("Создание свидетельства о рождении")
+    @Story("Тестирование базы данных")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Проверяем, что база данных корректно сохраняет свидетельство о рождении")
+    void verifyBirthCertificateInDatabase() {
+
+        BirthCertificate actualBirthCertificate = assertDoesNotThrow(
+                () -> birthCertificateDAO.findById(createdBirthCertificateId),
+                "Ошибка при получении свидетельства о рождении из БД"
+        );
+
+        assertAll(
+                () -> assertEquals(
+                        expectedBirthCertificate.getCitizenId(),
+                        actualBirthCertificate.getCitizenId()
+                ),
+                () -> assertEquals(
+                        expectedBirthCertificate.getPlaceOfBirth(),
+                        actualBirthCertificate.getPlaceOfBirth()
+                ),
+                () -> assertEquals(
+                        expectedBirthCertificate.getMother(),
+                        actualBirthCertificate.getMother()
+                ),
+                () -> assertEquals(
+                        expectedBirthCertificate.getFather(),
+                        actualBirthCertificate.getFather()
+                ),
+                () -> assertEquals(
+                        expectedBirthCertificate.getGrandma(),
+                        actualBirthCertificate.getGrandma()
+                ),
+                () -> assertEquals(
+                        expectedBirthCertificate.getGrandpa(),
+                        actualBirthCertificate.getGrandpa()
+                )
+        );
+
+    }
+}

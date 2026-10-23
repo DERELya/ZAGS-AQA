@@ -9,14 +9,14 @@ import lombok.Data;
 public class AppForDeathDto {
 
     @JsonProperty("applicantid")
-    private Long applicantId;
+    private Integer applicantId;
 
     @JsonProperty("citizenid")
-    private Long citizenId;
+    private Integer citizenId;
 
     @JsonProperty("applicationid")
-    private Long applicationId;
+    private Integer applicationId;
 
     @JsonProperty("deathcertificateid")
-    private Long deathCertificateId;
+    private Integer deathCertificateId;
 }

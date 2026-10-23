@@ -123,27 +123,68 @@ public class GetApplicationsTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Проверяет размеры двух соседних страниц и отсутствие дубликатов ID, повторяет чтение, если данные стенда изменились во время проверки")
     void getApplicationsPagination() {
-        PaginationSnapshot snapshot = getStablePaginationSnapshot();
+        ApplicationsResponseDto firstPage = null;
+        ApplicationsResponseDto secondPage = null;
 
-        List<ApplicationDto> firstApplications =
-                snapshot.firstPage().getData();
+        int firstTotal = -1;
+        int secondTotal = -1;
 
-        List<ApplicationDto> secondApplications =
-                snapshot.secondPage().getData();
+        for (int attempt = 1; attempt <= MAX_PAGINATION_ATTEMPTS; attempt++) {
+            firstPage = ZagsApiSteps.getApplications(1, PAGINATION_LIMIT);
+            secondPage = ZagsApiSteps.getApplications(2, PAGINATION_LIMIT);
 
-        int total = snapshot.total();
+            assertNotNull(firstPage, "Ответ первой страницы отсутствует");
+            assertNotNull(secondPage, "Ответ второй страницы отсутствует");
+            assertNotNull(firstPage.getData(), "Данные первой страницы отсутствуют");
+            assertNotNull(secondPage.getData(), "Данные второй страницы отсутствуют");
 
-        Set<Long> firstIds =
-                getApplicationIds(firstApplications, "первой");
+            firstTotal = parseTotal(firstPage.getTotal());
+            secondTotal = parseTotal(secondPage.getTotal());
 
-        Set<Long> secondIds =
-                getApplicationIds(secondApplications, "второй");
+            if (firstTotal == secondTotal) {
+                break;
+            }
+        }
+
+        assertEquals(
+                firstTotal,
+                secondTotal,
+                "Данные стенда изменялись между запросами страниц. "
+                        + "Не удалось получить согласованный результат за "
+                        + MAX_PAGINATION_ATTEMPTS + " попытки"
+        );
+
+        final int stableFirstTotal = firstTotal;
+        final int stableSecondTotal = secondTotal;
+
+        List<ApplicationDto> firstApplications = firstPage.getData();
+        List<ApplicationDto> secondApplications = secondPage.getData();
 
         assertAll(
                 "Проверка размеров страниц",
 
+                () -> assertTrue(
+                        firstApplications.size() <= PAGINATION_LIMIT,
+                        "Первая страница превышает limit"
+                ),
+
+                () -> assertTrue(
+                        secondApplications.size() <= PAGINATION_LIMIT,
+                        "Вторая страница превышает limit"
+                ),
+
+                () -> assertTrue(
+                        stableFirstTotal >= firstApplications.size(),
+                        "total меньше размера первой страницы"
+                ),
+
+                () -> assertTrue(
+                        stableSecondTotal >= secondApplications.size(),
+                        "total меньше размера второй страницы"
+                ),
+
                 () -> assertEquals(
-                        Math.min(PAGINATION_LIMIT, total),
+                        Math.min(PAGINATION_LIMIT, stableFirstTotal),
                         firstApplications.size(),
                         "Размер первой страницы не соответствует total и limit"
                 ),
@@ -151,26 +192,29 @@ public class GetApplicationsTest {
                 () -> assertEquals(
                         Math.min(
                                 PAGINATION_LIMIT,
-                                Math.max(0, total - PAGINATION_LIMIT)
+                                Math.max(0, stableSecondTotal - PAGINATION_LIMIT)
                         ),
                         secondApplications.size(),
                         "Размер второй страницы не соответствует total и limit"
-                ),
-
-                () -> assertEquals(
-                        firstApplications.size(),
-                        firstIds.size(),
-                        "На первой странице есть повторяющиеся applicationid"
-                ),
-
-                () -> assertEquals(
-                        secondApplications.size(),
-                        secondIds.size(),
-                        "На второй странице есть повторяющиеся applicationid"
                 )
         );
 
-        Set<Long> intersection = new HashSet<>(firstIds);
+        Set<Integer> firstIds = getApplicationIds(firstApplications, "первой");
+        Set<Integer> secondIds = getApplicationIds(secondApplications, "второй");
+
+        assertEquals(
+                firstApplications.size(),
+                firstIds.size(),
+                "На первой странице есть повторяющиеся applicationid"
+        );
+
+        assertEquals(
+                secondApplications.size(),
+                secondIds.size(),
+                "На второй странице есть повторяющиеся applicationid"
+        );
+
+        Set<Integer> intersection = new HashSet<>(firstIds);
         intersection.retainAll(secondIds);
 
         assertTrue(
@@ -194,7 +238,7 @@ public class GetApplicationsTest {
         return total;
     }
 
-    private Set<Long> getApplicationIds(List<ApplicationDto> applications, String pageDescription) {
+    private Set<Integer> getApplicationIds(List<ApplicationDto> applications, String pageDescription) {
         return applications.stream()
                 .map(application -> {
                     assertNotNull(
@@ -209,89 +253,5 @@ public class GetApplicationsTest {
                     return application.getApplicationId();
                 })
                 .collect(Collectors.toSet());
-    }
-
-    @Step("Получаем стабильные данные двух страниц заявок")
-    private PaginationSnapshot getStablePaginationSnapshot() {
-        int lastFirstTotal = -1;
-        int lastSecondTotal = -1;
-        Set<Long> lastIntersection = Set.of();
-
-        for (int attempt = 1; attempt <= MAX_PAGINATION_ATTEMPTS; attempt++) {
-            ApplicationsResponseDto firstPage =
-                    ZagsApiSteps.getApplications(1, PAGINATION_LIMIT);
-
-            ApplicationsResponseDto secondPage =
-                    ZagsApiSteps.getApplications(2, PAGINATION_LIMIT);
-
-            assertNotNull(firstPage, "Ответ первой страницы отсутствует");
-            assertNotNull(secondPage, "Ответ второй страницы отсутствует");
-
-            assertNotNull(firstPage.getData(), "Данные первой страницы отсутствуют");
-            assertNotNull(secondPage.getData(), "Данные второй страницы отсутствуют");
-
-            int firstTotal = parseTotal(firstPage.getTotal());
-            int secondTotal = parseTotal(secondPage.getTotal());
-
-            lastFirstTotal = firstTotal;
-            lastSecondTotal = secondTotal;
-
-            if (firstTotal != secondTotal) {
-                continue;
-            }
-
-            Set<Long> firstIds =
-                    getApplicationIds(firstPage.getData(), "первой");
-
-            Set<Long> secondIds =
-                    getApplicationIds(secondPage.getData(), "второй");
-
-            Set<Long> intersection = new HashSet<>(firstIds);
-            intersection.retainAll(secondIds);
-            lastIntersection = intersection;
-
-            ApplicationsResponseDto confirmedFirstPage =
-                    ZagsApiSteps.getApplications(1, PAGINATION_LIMIT);
-
-            assertNotNull(
-                    confirmedFirstPage,
-                    "Ответ контрольного запроса первой страницы отсутствует"
-            );
-            assertNotNull(
-                    confirmedFirstPage.getData(),
-                    "Данные контрольной первой страницы отсутствуют"
-            );
-
-            int confirmedTotal = parseTotal(confirmedFirstPage.getTotal());
-
-            Set<Long> confirmedFirstIds =
-                    getApplicationIds(
-                            confirmedFirstPage.getData(),
-                            "контрольной первой"
-                    );
-
-            boolean firstPageStable =
-                    firstTotal == confirmedTotal
-                            && firstIds.equals(confirmedFirstIds);
-
-            if (firstPageStable && intersection.isEmpty()) {
-                return new PaginationSnapshot(
-                        firstPage,
-                        secondPage,
-                        firstTotal
-                );
-            }
-        }
-
-        throw new AssertionError(
-                "Не удалось получить стабильные страницы за "
-                        + MAX_PAGINATION_ATTEMPTS
-                        + " попытки. total первой страницы: "
-                        + lastFirstTotal
-                        + ", total второй страницы: "
-                        + lastSecondTotal
-                        + ", пересечение ID: "
-                        + lastIntersection
-        );
     }
 }

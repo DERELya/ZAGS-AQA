@@ -18,7 +18,9 @@
     <Appenders>
 
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout
+                    charset="UTF-8"
+                    pattern="${LOG_PATTERN}"/>
         </Console>
 
 
@@ -27,9 +29,7 @@
                 fileName="${LOG_DIR}/test.log"
                 filePattern="${LOG_DIR}/archive/test-%d{yyyy-MM-dd}-%i.log.gz">
 
-            <PatternLayout>
-                <Pattern>${LOG_PATTERN}</Pattern>
-            </PatternLayout>
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
 
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1"/>
@@ -40,10 +40,48 @@
 
         </RollingFile>
 
+        <RollingFile
+                name="UIFile"
+                fileName="${LOG_DIR}/ui.log"
+                filePattern="${LOG_DIR}/archive/ui-%d{yyyy-MM-dd}-%i.log.gz" >
+
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile
+                name="DBFile"
+                fileName="${LOG_DIR}/db.log"
+                filePattern="${LOG_DIR}/archive/db-%d{yyyy-MM-dd}-%i.log.gz">
+
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+
     </Appenders>
 
-
     <Loggers>
+        <Logger name="pages" level="INFO" additivity="false">
+            <AppenderRef ref="UIFile"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="db" level="DEBUG" additivity="false">
+            <AppenderRef ref="DBFile"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>

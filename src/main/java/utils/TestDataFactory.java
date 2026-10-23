@@ -47,9 +47,45 @@ public final class TestDataFactory {
     }
 
     public static ApplicationRequestDto deathApplication() {
+        ApplicationRequestDto application =
+                createBaseApplication("death");
+        application.setDeathPlaceOfDeath("Брест");
+        application.setDeathDateOfDeath(
+                HelperForDate.toIsoDate(LocalDate.now().minusDays(10))
+        );
+        return application;
+    }
+
+    public static ApplicationRequestDto weddingApplication() {
+        ApplicationRequestDto application =
+                createBaseApplication("wedding");
+        application.setAnotherPersonFirstName("Олег");
+        application.setAnotherPersonMiddleName("Викторович");
+        application.setAnotherPersonLastName("Сергеев");
+        application.setNewLastName("Сергеев");
+        application.setAnotherPersonPassport(nextPassport());
+        application.setBirthOfAnotherPerson(HelperForDate.toIsoDate(LocalDate.of(2002, 9, 12)));
+        application.setDateOfMarriage(HelperForDate.toIsoDate(LocalDate.now().plusMonths(2)));
+
+        return application;
+    }
+
+    public static ApplicationRequestDto birthApplication() {
+        ApplicationRequestDto application =
+                createBaseApplication("birth");
+        application.setBirthPlace("Брест");
+        application.setBirthMother("Ольга");
+        application.setBirthFather("Олег");
+        application.setBirthGrandma("Татьяна");
+        application.setBirthGrandpa("Михаил");
+
+        return application;
+    }
+
+    private static ApplicationRequestDto createBaseApplication(String mode) {
         ApplicationRequestDto application = new ApplicationRequestDto();
 
-        application.setMode("death");
+        application.setMode(mode);
 
         application.setPersonalLastName("Сергеев");
         application.setPersonalFirstName("Олег");
@@ -67,11 +103,6 @@ public final class TestDataFactory {
         );
         application.setCitizenAddress("Брест");
         application.setCitizenNumberOfPassport(nextPassport());
-
-        application.setDeathPlaceOfDeath("Брест");
-        application.setDeathDateOfDeath(
-                HelperForDate.toIsoDate(LocalDate.now().minusDays(10))
-        );
 
         return application;
     }

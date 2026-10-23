@@ -8,9 +8,9 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AdministrationApplicantionDto {
     @JsonProperty("applId")
-    private Long applId;
+    private Integer applId;
     @JsonProperty("staffid")
-    private Long staffid;
+    private Integer staffid;
     @JsonProperty("action")
     private String action;
 }

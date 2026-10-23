@@ -8,16 +8,16 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicationDto {
     @JsonProperty("applicationid")
-    private Long applicationId;
+    private Integer applicationId;
 
     @JsonProperty("citizenid")
-    private Long citizenId;
+    private Integer citizenId;
 
     @JsonProperty("applicantid")
-    private Long applicantId;
+    private Integer applicantId;
 
     @JsonProperty("staffid")
-    private Long staffId;
+    private Integer staffId;
 
     @JsonProperty("dateofapplication")
     private String dateOfApplication;

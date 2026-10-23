@@ -29,6 +29,8 @@
         <surefire.version>3.5.4</surefire.version>
         <rest-assured.version>6.0.1</rest-assured.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <postgresql.version>42.7.8</postgresql.version>
+        <hibernate.version>7.4.13.Final</hibernate.version>
         <cucumber.version>7.33.0</cucumber.version>
         <junit-platform-suite.version>1.14.0</junit-platform-suite.version>
     </properties>
@@ -112,6 +114,17 @@
             <version>${jackson.version}</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
