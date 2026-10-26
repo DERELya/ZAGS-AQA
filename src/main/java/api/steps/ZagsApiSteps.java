@@ -57,7 +57,7 @@ public final class ZagsApiSteps {
                 .as(responseType);
     }
 
-    @Step("Создаём заявку на регистрацию смерти и получаем её ID")
+    @Step("Создаём заявку и получаем её ID")
     public static Integer createDeathApplication(ApplicationRequestDto requestDto) {
         ApplicationResponseDto<AppForDeathDto> response =
                 sendApplication(requestDto,new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {});

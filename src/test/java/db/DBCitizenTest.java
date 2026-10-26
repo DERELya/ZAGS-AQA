@@ -4,8 +4,6 @@ import api.dto.AppForDeathDto;
 import api.dto.ApplicationRequestDto;
 import api.dto.ApplicationResponseDto;
 import api.steps.ZagsApiSteps;
-import db.dao.ApplicantDAO;
-import db.dao.ApplicationDAO;
 import db.dao.CitizenDAO;
 import db.hibernate.dao.DeathCertificateDAO;
 import db.model.Citizen;
