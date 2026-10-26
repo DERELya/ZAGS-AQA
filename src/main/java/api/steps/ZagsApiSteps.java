@@ -41,7 +41,7 @@ public final class ZagsApiSteps {
         return response.getData().getStaffId();
     }
 
-    @Step("Отправляем заявку на регистрацию смерти")
+    @Step("Отправляем заявку в ЗАГС")
     public static <T> ApplicationResponseDto<T> sendApplication(
             ApplicationRequestDto requestDto,
             TypeRef<ApplicationResponseDto<T>> responseType) {
@@ -57,7 +57,7 @@ public final class ZagsApiSteps {
                 .as(responseType);
     }
 
-    @Step("Создаём заявку и получаем её ID")
+    @Step("Создаём заявку на регистрацию смерти и получаем её ID")
     public static Integer createDeathApplication(ApplicationRequestDto requestDto) {
         ApplicationResponseDto<AppForDeathDto> response =
                 sendApplication(requestDto,new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {});
