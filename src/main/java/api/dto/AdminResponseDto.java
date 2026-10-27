@@ -15,6 +15,6 @@ public class AdminResponseDto {
     public static class AdminDataDto {
 
         @JsonProperty("staffid")
-        private Long staffId;
+        private Integer staffId;
     }
 }

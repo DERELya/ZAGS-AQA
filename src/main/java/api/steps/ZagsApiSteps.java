@@ -28,7 +28,7 @@ public final class ZagsApiSteps {
     }
 
     @Step("Создаём администратора и получаем его ID")
-    public static long createAdministrator(AdminRequestDto requestDto) {
+    public static Integer createAdministrator(AdminRequestDto requestDto) {
         AdminResponseDto response = sendAdminRequest(requestDto);
         if (response.getData() == null
                 || response.getData().getStaffId() == null
@@ -41,8 +41,11 @@ public final class ZagsApiSteps {
         return response.getData().getStaffId();
     }
 
-    @Step("Отправляем заявку на регистрацию смерти")
-    public static ApplicationResponseDto<AppForDeathDto> sendDeathApplication(ApplicationRequestDto requestDto) {
+    @Step("Отправляем заявку в ЗАГС")
+    public static <T> ApplicationResponseDto<T> sendApplication(
+            ApplicationRequestDto requestDto,
+            TypeRef<ApplicationResponseDto<T>> responseType) {
+
         return given()
                 .spec(RequestSpecs.baseRequestSpec())
                 .body(requestDto)
@@ -51,14 +54,13 @@ public final class ZagsApiSteps {
                 .then()
                 .spec(ResponseSpecs.successResponse())
                 .extract()
-                .as(new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {
-                });
+                .as(responseType);
     }
 
     @Step("Создаём заявку на регистрацию смерти и получаем её ID")
-    public static long createDeathApplication(ApplicationRequestDto requestDto) {
+    public static Integer createDeathApplication(ApplicationRequestDto requestDto) {
         ApplicationResponseDto<AppForDeathDto> response =
-                sendDeathApplication(requestDto);
+                sendApplication(requestDto,new TypeRef<ApplicationResponseDto<AppForDeathDto>>() {});
 
         if (response.getData() == null
                 || response.getData().getApplicationId() == null
@@ -72,7 +74,7 @@ public final class ZagsApiSteps {
     }
 
     @Step("Получаем статус заявки по ID {applicationId}")
-    public static ApplicationResponseDto<ApplicationDto> getApplicationStatus(Long applicationId) {
+    public static ApplicationResponseDto<ApplicationDto> getApplicationStatus(Integer applicationId) {
         return given()
                 .spec(RequestSpecs.baseRequestSpec())
                 .pathParam("applicationId", applicationId)
@@ -125,3 +127,4 @@ public final class ZagsApiSteps {
                 .as(ApplicationsResponseDto.class);
     }
 }
+

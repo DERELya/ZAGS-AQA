@@ -12,8 +12,23 @@ public enum Gender {
         this.value = value;
     }
 
+    public static Gender fromValue(String gender) {
+        if (gender == null) {
+            return null;
+        }
+        if (gender.equalsIgnoreCase("male")) {
+            return MALE;
+        }
+        if (gender.equalsIgnoreCase("female")) {
+            return FEMALE;
+        }
+        throw new IllegalArgumentException("Неизвестный пол: " + gender);
+    }
+
     @JsonValue
     public String getValue() {
         return value;
     }
+    
+    
 }
