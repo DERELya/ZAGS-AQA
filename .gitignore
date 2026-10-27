@@ -10,7 +10,7 @@ out/
 *.iws
 *.iml
 *.ipr
-
+.env
 ### Logs ###
 logs/
 *.log

@@ -43,7 +43,7 @@ public class LoginAdminPage extends BasePage {
         clearAndSendKeys(middleNameInput, admin.middleName());
         clearAndSendKeys(phoneNumberInput, admin.phoneNumber());
         clearAndSendKeys(passportInput, admin.passport());
-        clearAndSendKeys(dateOfBirthInput, admin.dateOfBirth());
+        clearAndSendDate(dateOfBirthInput, admin.dateOfBirth());
 
         return this;
     }

@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>ZAGS</artifactId>
+    <artifactId>ZAGS-AQA</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Archetype - ZAGS</name>
     <url>https://maven.apache.org</url>
@@ -33,6 +33,9 @@
         <hibernate.version>7.4.13.Final</hibernate.version>
         <cucumber.version>7.33.0</cucumber.version>
         <junit-platform-suite.version>1.14.0</junit-platform-suite.version>
+
+        <parallel>false</parallel>
+        <threads>3</threads>
     </properties>
 
     <dependencyManagement>
@@ -114,7 +117,6 @@
             <version>${jackson.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -122,9 +124,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -142,7 +145,6 @@
             <artifactId>junit-platform-suite</artifactId>
             <version>${junit-platform-suite.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -174,6 +176,15 @@
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
+
+                    <systemPropertyVariables>
+                        <junit.jupiter.execution.parallel.enabled>${parallel}</junit.jupiter.execution.parallel.enabled>
+                        <junit.jupiter.execution.parallel.mode.default>concurrent</junit.jupiter.execution.parallel.mode.default>
+                        <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                        <junit.jupiter.execution.parallel.config.strategy>fixed</junit.jupiter.execution.parallel.config.strategy>
+                        <junit.jupiter.execution.parallel.config.fixed.parallelism>${threads}</junit.jupiter.execution.parallel.config.fixed.parallelism>
+                        <junit.jupiter.execution.parallel.config.fixed.max-pool-size>10</junit.jupiter.execution.parallel.config.fixed.max-pool-size>
+                    </systemPropertyVariables>
                 </configuration>
 
                 <dependencies>
@@ -193,5 +204,20 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>selenoid</id>
+            <activation>
+                <property>
+                    <name>selenoid</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <parallel>true</parallel>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

@@ -27,7 +27,7 @@ public class ServiceDeathPage extends BasePage {
 
     @Step("Заполнение данных услуги регистрация смерти: {deathData.dateOfDeath},{deathData.placeOfDeath}")
     public ServiceDeathPage fillForm(DeathData deathData) {
-        clearAndSendKeys(dateOfDeathInput, deathData.dateOfDeath());
+        clearAndSendDate(dateOfDeathInput, deathData.dateOfDeath());
         clearAndSendKeys(placeOfDeathInput, deathData.placeOfDeath());
         return this;
     }

@@ -35,7 +35,6 @@ public class ChooseServicePage extends BasePage {
     @Step("Нажатие кнопки 'Регистрация смерти'")
     public CitizenPage clickButtonDeath() {
         click(buttonDeath);
-
         return new CitizenPage();
     }
 }

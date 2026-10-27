@@ -12,6 +12,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.AllureFailureExtension;
 import utils.DriverManager;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @ExtendWith(AllureFailureExtension.class)
 public abstract class BasePage {
     protected WebDriver driver;
@@ -25,11 +28,23 @@ public abstract class BasePage {
     }
 
     protected void clearAndSendKeys(WebElement element, String value) {
-        logger.info("Ввод данных в элемент: {}", element);
+        logger.info("Ввод данных: {} в элемент: {}",value, element);
         wait.until(ExpectedConditions.visibilityOf(element));
-        element.sendKeys(Keys.CONTROL + "a");
-        element.sendKeys(Keys.BACK_SPACE);
+        element.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE);
         element.sendKeys(value);
+    }
+
+    protected void clearAndSendDate(WebElement element, String date) {
+        logger.info("Ввод даты: {} в элемент: {}",date, element);
+        String formattedDate = LocalDate.parse(
+                date,
+                DateTimeFormatter.ofPattern("dd.MM.yyyy")
+        ).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        element.click();
+        element.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        element.sendKeys(formattedDate);
     }
 
     protected void click(WebElement element) {

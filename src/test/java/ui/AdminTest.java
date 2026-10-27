@@ -4,10 +4,10 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import pages.LoginPage;
 import pages.user.ServiceBirthPage;
 import pages.user.StatusPage;
+import utils.selinoid.CrossBrowserTest;
 
 @Epic("ZAGS")
 @Feature("UI — Проверка статуса заявки в администрирование заявок")
@@ -21,7 +21,7 @@ public class AdminTest extends BaseTest {
         new StatusPage().clickCloseButton();
     }
 
-    @Test
+    @CrossBrowserTest
     @DisplayName("Проверка статуса заявки")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Проверка статуса заявления")

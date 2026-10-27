@@ -44,7 +44,7 @@ public class CitizenPage extends BasePage {
         clearAndSendKeys(lastNameInput, citizen.lastName());
         clearAndSendKeys(firstNameInput, citizen.firstName());
         clearAndSendKeys(middleNameInput, citizen.middleName());
-        clearAndSendKeys(dateOfBirthInput, citizen.dateOfBirth());
+        clearAndSendDate(dateOfBirthInput, citizen.dateOfBirth());
         clearAndSendKeys(passportInput, citizen.passportNumber());
         clearAndSendKeys(genderInput, citizen.gender());
         clearAndSendKeys(addressInput, citizen.address());
@@ -89,7 +89,6 @@ public class CitizenPage extends BasePage {
     @Step("нажатие кнопки далее")
     public <T extends BasePage> T clickNextButton(Supplier<T> nextPage) {
         click(nextButton);
-
         return nextPage.get();
     }
     @Step("нажатие кнопки далее")
