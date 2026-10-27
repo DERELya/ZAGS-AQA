@@ -46,7 +46,7 @@ public abstract class BaseTest {
 
         driver = DriverManager.getDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get(TestConfig.getBaseUrl());
+        driver.get(DriverManager.withCredentials(TestConfig.getBaseUrl()));
     }
 
     @AfterEach

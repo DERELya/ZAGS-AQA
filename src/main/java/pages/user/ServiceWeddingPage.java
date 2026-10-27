@@ -44,12 +44,12 @@ public class ServiceWeddingPage extends BasePage {
     @Step("Заполнение данных услуги регистрация брака: {weddingData.dateOfRegistration}, {weddingData.newLastName}, {weddingData.lastNameSpouse}, {nameSpouse}")
     public ServiceWeddingPage fillForm(WeddingData weddingData) {
 
-        clearAndSendKeys(dateOfRegistrationInput, weddingData.dateOfRegistration());
+        clearAndSendDate(dateOfRegistrationInput, weddingData.dateOfRegistration());
         clearAndSendKeys(newLastNameInput, weddingData.newLastName());
         clearAndSendKeys(lastNameSpouseInput, weddingData.lastNameSpouse());
         clearAndSendKeys(nameSpouseInput, weddingData.nameSpouse());
         clearAndSendKeys(middleNameSpouseInput, weddingData.middleNameSpouse());
-        clearAndSendKeys(dateOfBirthSpouseInput, weddingData.dateOfBirthSpouse());
+        clearAndSendDate(dateOfBirthSpouseInput, weddingData.dateOfBirthSpouse());
         clearAndSendKeys(passportSpouseInput, weddingData.passportSpouse());
 
         return this;
