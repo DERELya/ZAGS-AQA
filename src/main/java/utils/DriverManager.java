@@ -38,6 +38,15 @@ public class DriverManager {
                     System.getenv().getOrDefault("DOCKER", "false")
             )
     );
+    private static final boolean HEADLESS = Boolean.parseBoolean(
+            System.getProperty(
+                    "headless",
+                    System.getenv().getOrDefault(
+                            "HEADLESS",
+                            Boolean.toString(DOCKER)
+                    )
+            )
+    );
 
     private static final String SELENOID_URL = System.getProperty(
             "selenoid.url",
@@ -75,7 +84,7 @@ public class DriverManager {
                     : createLocalDriver();
 
             try {
-                if (!SELENOID && DOCKER) {
+                if (!SELENOID && HEADLESS) {
                     driver.manage().window().setSize(new Dimension(1920, 1080));
                 } else {
                     driver.manage().window().maximize();
@@ -109,12 +118,17 @@ public class DriverManager {
     private static WebDriver createLocalDriver() {
         ChromeOptions options = new ChromeOptions();
 
-        if (DOCKER) {
+        if (HEADLESS) {
             options.addArguments(
                     "--headless=new",
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
                     "--window-size=1920,1080"
+            );
+        }
+
+        if (DOCKER) {
+            options.addArguments(
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage"
             );
         }
 

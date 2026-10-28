@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -36,15 +37,36 @@ public abstract class BasePage {
 
     protected void clearAndSendDate(WebElement element, String date) {
         logger.info("Ввод даты: {} в элемент: {}",date, element);
-        String formattedDate = LocalDate.parse(
+        LocalDate parsed = LocalDate.parse(
                 date,
                 DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        ).format(DateTimeFormatter.ISO_LOCAL_DATE);
+        );
+
+        String browser = ((RemoteWebDriver) driver)
+                .getCapabilities()
+                .getBrowserName();
 
         wait.until(ExpectedConditions.elementToBeClickable(element));
-        element.click();
-        element.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        element.sendKeys(formattedDate);
+        element.clear();
+
+        if ("firefox".equalsIgnoreCase(browser)) {
+            element.sendKeys(parsed.toString());
+        } else {
+            String pattern = System.getProperty(
+                    "date.input.pattern",
+                    DriverManager.isSelenoid() ? "MMddyyyy" : "ddMMyyyy"
+            );
+
+            element.sendKeys(
+                    Keys.ARROW_LEFT,
+                    Keys.ARROW_LEFT,
+                    parsed.format(DateTimeFormatter.ofPattern(pattern))
+            );
+        }
+
+        wait.until(ExpectedConditions.domPropertyToBe(
+                element, "value", parsed.toString()
+        ));
     }
 
     protected void click(WebElement element) {
